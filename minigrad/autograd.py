@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Union, Tuple, Optional, Set
+from typing import Union, Tuple, Optional
 
 class Scalar():
 
@@ -48,14 +48,7 @@ class Scalar():
 
     # Subtraction operation override
     def __sub__(self, rhs: Scalar):
-        new = Scalar(self.data - rhs.data, parents=(self,rhs), op='-')
-
-        def backward():
-            self.grad += new.grad
-            rhs.grad += new.grad
-        new._backward = backward
-
-        return new
+        return self + (-rhs)
 
     # Multiplication operation override
     def __mul__(self, rhs: Scalar):
@@ -86,13 +79,17 @@ class Scalar():
 
     # Unary operations
 
+    # Negate operation
+    def __neg__(self): # -self
+        return self * Scalar(-1)
+
     # ReLU
     def relu(self):
         new = Scalar(max(self.data, 0), parents=(self, None), op='relu')
 
         # Define the derivative calculation for this operation
         def backward():
-            self.grad += (new.grad > 0) * new.grad
+            self.grad += (new.data > 0) * new.grad
         new._backward = backward
 
         return new
