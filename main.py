@@ -23,4 +23,19 @@ def testing_operations():
     print(f"a.relu():       {rel}")
     print(f"sub.relu():     {sub.relu()}")
 
-testing_operations()
+def testing_autograd():
+
+    a = Scalar(-3.9)
+    b = Scalar(1.9)
+    g = (a+b) / (a*b)
+    g.backward()
+    amg, bmg, gmg = a, b, g
+
+    print(amg.data)
+    print(bmg.data)
+    print(gmg.data)
+    print(amg.grad)
+    print(bmg.grad)
+    print(gmg.grad)
+
+testing_autograd()
