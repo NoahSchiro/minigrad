@@ -1,4 +1,5 @@
 from minigrad.autograd import Scalar
+from minigrad.tensor import Tensor
 
 def testing_operations():
 
@@ -38,4 +39,11 @@ def testing_autograd():
     print(bmg.grad)
     print(gmg.grad)
 
-testing_autograd()
+def testing_tensors():
+    lst = [[0,1,2], [3,4,5], [6,7,8]]
+    t1 = Tensor(lst)
+
+    print(t1)
+
+
+testing_tensors()
