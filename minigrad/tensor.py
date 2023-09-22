@@ -1,3 +1,4 @@
+from __future__ import annotations
 from typing import Callable, Sequence 
 import copy
 
@@ -9,6 +10,7 @@ class Tensor():
     def __init__(self, data):
         self.shape = self.get_shape(data) #TODO
 
+        self.data_list = data
         self.data = None 
 
         # Make tensor carry Scalar class 
@@ -56,8 +58,20 @@ class Tensor():
         as_list = self.unary(self.data, lambda x: x.data)
         return f"Tensor({as_list})"
 
-    def __add__(self):
-        pass
+    def __add__(self, rhs: Tensor):
+        assert self.shape == rhs.shape, "Tensors do not have the same size"
+        new = Tensor(self.data_list)
+
+        def recurse(data, acc):
+            for idx in range(0, len(data)):
+                if isinstance(data[idx], list):
+                    recurse(data[idx], acc[idx])
+                else:
+                    acc[idx] += data[idx]
+        recurse(rhs.data, new.data)
+
+
+        return new 
 
     def __mul__(self):
         pass
