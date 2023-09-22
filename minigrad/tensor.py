@@ -58,6 +58,12 @@ class Tensor():
         as_list = self.unary(self.data, lambda x: x.data)
         return f"Tensor({as_list})"
 
+    def __getitem__(self, idx):
+        return self.data[idx]
+
+    def __setitem__(self, idx, value):
+        self.data[idx] = value
+
     def __add__(self, rhs: Tensor):
         assert self.shape == rhs.shape, "Tensors do not have the same size"
         new = Tensor(self.data_list)
@@ -73,5 +79,35 @@ class Tensor():
 
         return new 
 
-    def __mul__(self):
-        pass
+
+    def __mul__(self, rhs: Tensor):
+        assert len(self.shape) == 2, "Tensor must be matrix (dim=2) for multiplication"
+        assert len(rhs.shape)  == 2, "Tensor must be matrix (dim=2) for multiplication"
+
+        assert self.shape[1] == rhs.shape[0], "Tensors cannot be multiplied"
+
+
+        m = self.shape[0]
+        n = self.shape[1]
+        p = rhs.shape[1]
+
+        result = Tensor.zero([m, p])
+
+        for i in range(m):
+            for j in range(p):
+                for k in range(n):
+                    result[i][j] += self[i][k] * rhs[k][j]
+
+        return result
+
+    @staticmethod
+    def zero(shape: list[int]) -> Tensor:
+        new = []
+        for _ in range(shape[0]):
+            temp = [0] * shape[1]
+            new.append(temp)
+
+        return Tensor(new)
+        
+
+

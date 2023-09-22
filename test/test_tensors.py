@@ -8,7 +8,7 @@ def test_tensor_addition():
 
     for i in range(0,3):
         for j in range(0,3):
-            assert t3.data[i][j].data == 8
+            assert t3[i][j].data == 8
 
 
     t1 = Tensor([[1,1]])
@@ -19,6 +19,14 @@ def test_tensor_addition():
     except:
         print("exception!")
 
+def test_tensor_multiplication():
+    
+    t1 = Tensor([[1,2], [3,4]])
+    t2 = Tensor([[5,6], [7,8]])
 
+    t3 = t1*t2
 
+    expected = Tensor([[19, 22], [43, 50]])
+
+    assert t3 == expected
 

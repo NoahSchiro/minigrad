@@ -50,5 +50,12 @@ def testing_tensors():
     print(t2)
     print(t3)
 
+    print(t1[0][0])
+
+    t1 = Tensor([[1,2], [3,4]])
+    t2 = Tensor([[5,6], [7,8]])
+
+    print(t1*t2)
+
 
 testing_tensors()
