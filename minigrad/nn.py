@@ -1,5 +1,7 @@
 from .tensor import Tensor
+from .autograd import Scalar
 from random import uniform
+from functools import reduce
 
 class Module():
     def __init__(self):
@@ -27,3 +29,23 @@ class Linear(Module):
 
     def parameters(self):
         return [self.weights, self.biases]
+
+# Mean squared error
+def mse(lhs: Tensor, rhs: Tensor):
+    
+    assert lhs.shape == rhs.shape
+
+    num_elems = Scalar(reduce(lambda x, y: x*y, lhs.shape))
+
+    def recurse(lhs, rhs, loss):
+        for idx in range(0, len(lhs)):
+            if isinstance(lhs[idx], list):
+                return recurse(lhs[idx], rhs[idx], loss)
+            else:
+                loss += (rhs[idx] - lhs[idx])**2
+
+        return loss
+    
+    loss = recurse(lhs.data, rhs.data, Scalar(0))
+
+    return loss / num_elems
