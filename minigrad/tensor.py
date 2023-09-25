@@ -54,6 +54,22 @@ class Tensor():
 
         return shape
 
+    # Just supporting matrix transpose for now
+    def transpose(self):
+        assert len(self.shape) == 2
+
+        new = [[0 for _ in range(self.shape[0])] for _ in range(self.shape[1])]
+
+        # Transpose
+        for i in range(self.shape[0]):
+            for j in range(self.shape[1]):
+                new[j][i] = self.data[i][j]
+
+        # Reassign
+        self.data = new
+        self.shape = [self.shape[1], self.shape[0]]
+
+
     def __str__(self) -> str:
         as_list = self.unary(self.data, lambda x: x.data)
         return f"Tensor({as_list})"
@@ -83,7 +99,7 @@ class Tensor():
 
     def __add__(self, rhs: Tensor) -> Tensor:
         assert self.shape == rhs.shape, "Tensors do not have the same size"
-        new = Tensor(self.data_list)
+        new = copy.deepcopy(self)
 
         def recurse(data, acc):
             for idx in range(0, len(data)):
@@ -126,5 +142,3 @@ class Tensor():
 
         return Tensor(new)
         
-
-
