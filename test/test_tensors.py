@@ -42,14 +42,19 @@ def test_tensor_addition():
     except:
         print("exception!")
 
-def test_tensor_multiplication():
+def test_tensor_mul():
     
     t1 = Tensor([[1,2], [3,4]])
     t2 = Tensor([[5,6], [7,8]])
+    t3 = t1*t2
+    expected = Tensor([[19, 22], [43, 50]])
 
-    #t3 = t1*t2
+    assert t3 == expected
 
-    #expected = Tensor([[19, 22], [43, 50]])
+    t1 = Tensor([[1,2], [3,4]])
+    t2 = Tensor([[1,0], [0,1]]) # Identity
+    t3 = t1*t2
+    expected = Tensor([[1, 2], [3, 4]])
 
-    #assert t3 == expected
+    assert t3 == expected
 
