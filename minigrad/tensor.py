@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Callable, Sequence 
+from typing import Callable, Sequence, Tuple
 import copy
 
 from .autograd import Scalar
@@ -7,7 +7,7 @@ from .autograd import Scalar
 class Tensor():
 
     # TODO: How do I type hint a list of arbitrary dimension?
-    def __init__(self, data):
+    def __init__(self, data) -> None:
         self.shape = self.get_shape(data) #TODO
 
         self.data_list = data
@@ -34,7 +34,7 @@ class Tensor():
         else:
             return acc # else create a new bunch of data
 
-    def get_shape(self, lst, shape=()):
+    def get_shape(self, lst, shape=()) -> Tuple[int]:
 
         # Base case
         if not isinstance(lst, Sequence):
@@ -54,17 +54,34 @@ class Tensor():
 
         return shape
 
-    def __str__(self):
+    def __str__(self) -> str:
         as_list = self.unary(self.data, lambda x: x.data)
         return f"Tensor({as_list})"
 
-    def __getitem__(self, idx):
+    def __getitem__(self, idx: int) -> float:
         return self.data[idx]
 
-    def __setitem__(self, idx, value):
+    def __setitem__(self, idx: int, value: float) -> None:
         self.data[idx] = value
 
-    def __add__(self, rhs: Tensor):
+    def __eq__(self, rhs: Tensor) -> bool:
+
+        # If they don't have the same shape then they can't be equal
+        if self.shape != rhs.shape:
+            return False
+
+        def recurse(lhs, rhs):
+            for idx in range(0, len(lhs)):
+                if isinstance(lhs[idx], list):
+                    recurse(lhs[idx], rhs[idx])
+                else:
+                    if lhs[idx].data != rhs[idx].data:
+                        return False
+            return True
+
+        return recurse(self.data, rhs.data)
+
+    def __add__(self, rhs: Tensor) -> Tensor:
         assert self.shape == rhs.shape, "Tensors do not have the same size"
         new = Tensor(self.data_list)
 
@@ -80,7 +97,7 @@ class Tensor():
         return new 
 
 
-    def __mul__(self, rhs: Tensor):
+    def __mul__(self, rhs: Tensor) -> Tensor:
         assert len(self.shape) == 2, "Tensor must be matrix (dim=2) for multiplication"
         assert len(rhs.shape)  == 2, "Tensor must be matrix (dim=2) for multiplication"
 
