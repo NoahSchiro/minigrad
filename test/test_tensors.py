@@ -58,3 +58,12 @@ def test_tensor_mul():
 
     assert t3 == expected
 
+def test_tensor_relu():
+    t1 = Tensor([[-1,-2,-3], [1,2,3]])
+
+    t2 = t1.relu()
+
+    expected = Tensor([[0,0,0], [1,2,3]])
+
+    assert t1 == expected
+

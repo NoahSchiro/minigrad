@@ -8,7 +8,7 @@ class Tensor():
 
     # TODO: How do I type hint a list of arbitrary dimension?
     def __init__(self, data) -> None:
-        self.shape = self.get_shape(data) #TODO
+        self.shape = self.get_shape(data)
 
         self.data_list = data
         self.data = None 
@@ -111,26 +111,23 @@ class Tensor():
 
     def __add__(self, rhs: Tensor) -> Tensor:
         assert self.shape == rhs.shape, "Tensors do not have the same size"
-        new = copy.deepcopy(self)
+        new = Tensor.zero(self.shape)
 
-        def recurse(data, acc):
-            for idx in range(0, len(data)):
-                if isinstance(data[idx], list):
-                    recurse(data[idx], acc[idx])
+        def recurse(lhs, rhs, acc):
+            for idx in range(0, len(lhs)):
+                if isinstance(lhs[idx], list):
+                    recurse(lhs[idx], rhs[idx], acc[idx])
                 else:
-                    acc[idx] += data[idx]
-        recurse(rhs.data, new.data)
-
+                    acc[idx] = lhs[idx] + rhs[idx]
+        recurse(self.data, rhs.data, new.data)
 
         return new 
-
 
     def __mul__(self, rhs: Tensor) -> Tensor:
         assert len(self.shape) == 2, "Tensor must be matrix (dim=2) for multiplication"
         assert len(rhs.shape)  == 2, "Tensor must be matrix (dim=2) for multiplication"
 
         assert self.shape[1] == rhs.shape[0], "Tensors cannot be multiplied"
-
 
         m = self.shape[0]
         n = self.shape[1]
@@ -144,6 +141,19 @@ class Tensor():
                     result[i][j] += self[i][k] * rhs[k][j]
 
         return result
+
+    def relu(self) -> Tensor:
+        new = Tensor.zero(self.shape)
+
+        def recurse(data, new):
+            for idx in range(0, len(data)):
+                if isinstance(data[idx], list):
+                    recurse(data[idx], new[idx])
+                else:
+                    new[idx] = data[idx].relu()
+        recurse(self.data, new.data)
+
+        return new
 
     @staticmethod
     def zero(shape: list[int]) -> Tensor:
