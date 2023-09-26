@@ -7,6 +7,10 @@ class Module():
     def __init__(self):
         raise NotImplementedError()
 
+    def zerograd(self):
+        for tensor in self.parameters():
+            tensor.zerograd()
+
     def forward(self, data: Tensor):
         raise NotImplementedError()
 
@@ -22,13 +26,33 @@ class Linear(Module):
         rand = lambda: uniform(0,2) - 1
 
         self.weights = Tensor([[rand() for _ in range(in_feat)] for _ in range(out_feat)])
-        self.biases = Tensor([[rand()] for _ in range(out_feat)])
+        self.biases  = Tensor([[rand()] for _ in range(out_feat)])
 
     def forward(self, data: Tensor):
         return (self.weights * data) + self.biases
 
     def parameters(self):
         return [self.weights, self.biases]
+
+# Optimizer
+class SGD():
+    def __init__(self, params, lr):
+        self.params = params
+        self.lr = lr
+
+    def step(self):
+        def recurse(data):
+            for idx in range(0, len(data)):
+                if isinstance(data[idx], list):
+                    recurse(data[idx])
+                else:
+                    data[idx] -= data.grad * self.lr
+        
+        # Recursive update weights for each tensor
+        for tensor in self.params:
+            recurse(tensor.data)
+
+#----------------------------------LOSS FUNCTIONS-------------------------------------
 
 # Mean squared error
 def mse(lhs: Tensor, rhs: Tensor):

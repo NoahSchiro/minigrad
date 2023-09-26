@@ -54,6 +54,18 @@ class Tensor():
 
         return shape
 
+    def zerograd(self):
+        def recurse(data):
+            for idx in range(0, len(data)):
+                if isinstance(data[idx], list):
+                    recurse(data[idx])
+                else:
+                    data[idx].grad = 0.0
+        
+        recurse(self.data)
+
+
+
     # Just supporting matrix transpose for now
     def transpose(self):
         assert len(self.shape) == 2
