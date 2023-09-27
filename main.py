@@ -1,21 +1,28 @@
 from minigrad.tensor import Tensor
-from minigrad.nn import Linear
+from minigrad.nn import SGD
 
 
-t1 = Tensor([[1,2,3]])
-t1.transpose()
+def test_tensor_autograd():
+    t1 = Tensor([[10, 20], [30, 40]])
+    t2 = Tensor([[1, 2.1], [3,4]])
 
-# Input dimensions 3, output 2
-# Does weight multiplication and biases
-lin = Linear(3, 2)
+    optim = SGD([t1, t2], 0.1)
 
-print(f"Tensor: {t1}")
+    for epoch in range(0,2):
+        t3 = t1 * t2
+        #print(t3)
 
-print("Linear model: ")
-weights, biases = lin.parameters()
+        t3.data[0][0].backward()
 
-print(f"Weights: {weights}")
-print(f"Biases: {biases}")
+        for i in range(len(t1.data)):
+            for j in range(len(t1.data)):
+                #print(t2[i][j])
+                pass
+
+        optim.step()
 
 
-print(f"Result: {lin(t1)}")
+
+
+
+test_tensor_autograd()

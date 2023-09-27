@@ -67,3 +67,9 @@ def test_tensor_relu():
 
     assert t1 == expected
 
+def test_tensor_autograd():
+    t1 = Tensor([[1, 0], [0, 1]])
+    t2 = Tensor([[1, 2], [3, 4]])
+
+    t3 = t1 * t2
+    print(t3)

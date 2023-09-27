@@ -46,7 +46,8 @@ class SGD():
                 if isinstance(data[idx], list):
                     recurse(data[idx])
                 else:
-                    data[idx] -= data.grad * self.lr
+                    print(data[idx])
+                    data[idx].data -= data[idx].grad * self.lr
         
         # Recursive update weights for each tensor
         for tensor in self.params:
@@ -69,7 +70,8 @@ def mse(lhs: Tensor, rhs: Tensor):
                 loss += (rhs[idx] - lhs[idx])**2
 
         return loss
-    
-    loss = recurse(lhs.data, rhs.data, Scalar(0))
 
+   
+    loss = recurse(lhs.data, rhs.data, Scalar(0))
+ 
     return loss / num_elems
