@@ -55,6 +55,16 @@ def test_relu():
     assert a.relu().data == 3.2
     assert b.relu().data == 0.0
 
+def test_sigmoid():
+
+    a = Scalar(4)
+    b = a.sigmoid()
+    b.backward()
+
+    assert (b.data - 0.982014) < 0
+    assert (b.grad == 1)
+    assert (a.grad - 0.17) < 0
+
 import torch
 # Testing our autograd algorithm
 def test_autograd():

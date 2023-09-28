@@ -1,5 +1,6 @@
 from __future__ import annotations
 from typing import Union, Tuple, Optional
+from math import exp
 
 class Scalar():
 
@@ -90,6 +91,16 @@ class Scalar():
         # Define the derivative calculation for this operation
         def backward():
             self.grad += (new.data > 0) * new.grad
+        new._backward = backward
+
+        return new
+
+    def sigmoid(self):
+        euler = exp(-self.data)
+        new = Scalar((1 / (1 + euler)), parents=(self, None), op='sigmoid')
+
+        def backward():
+            self.grad += (euler / (euler + 1)**2) * new.grad
         new._backward = backward
 
         return new
