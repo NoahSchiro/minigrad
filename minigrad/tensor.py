@@ -155,6 +155,19 @@ class Tensor():
 
         return new
 
+    def sigmoid(self) -> Tensor:
+        new = Tensor.zero(self.shape)
+
+        def recurse(data, new):
+            for idx in range(0, len(data)):
+                if isinstance(data[idx], list):
+                    recurse(data[idx], new[idx])
+                else:
+                    new[idx] = data[idx].sigmoid()
+        recurse(self.data, new.data)
+
+        return new
+
     @staticmethod
     def zero(shape: list[int]) -> Tensor:
         new = []

@@ -46,7 +46,6 @@ class SGD():
                 if isinstance(data[idx], list):
                     recurse(data[idx])
                 else:
-                    print(data[idx])
                     data[idx].data -= data[idx].grad * self.lr
         
         # Recursive update weights for each tensor
