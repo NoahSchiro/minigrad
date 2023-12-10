@@ -72,7 +72,7 @@ def randomTrainingExample():
     line = randomChoice(category_lines[category])
 
     # Convert the category and line to tensor versions
-    category_tensor = Torch.tensor([all_categories.index(category)])
+    category_tensor = Tensor([all_categories.index(category)])
     line_tensor = lineToTensor(line)
 
     return category, line, category_tensor, line_tensor
@@ -103,9 +103,6 @@ class RNN(nn.Module):
     def forward(self, input): 
         input.transpose()
 
-        print(combined.shape)
-        print(self.i2h.weights.shape)
-
         # Pass it through the first set of linear stuff
         hidden = self.i2h(combined)
 
@@ -122,18 +119,23 @@ class RNN(nn.Module):
 
 model = RNN(N_LETTERS, N_HIDDEN, N_CATEGORIES)
 
+# input_tensor = letterToTensor("A")
+#
+# combined = Tensor([input_tensor.data[0] + hidden_vec.data[0]])
+#
+# 
+# print(out.shape)
+# print(hid.shape)
+
+cat, line, cat_ten, line_ten = randomTrainingExample()
+
+print(f"Class is {cat} for \"{line}\"")
+
 hidden_vec = model.initHidden()
-input_tensor = letterToTensor("A")
+out = None
+for letter in line_ten:
 
-# First we need to combine the tensors
-combined = Tensor([input_tensor.data[0] + hidden_vec.data[0]])
+    combined = Tensor([letter.data[0] + hidden_vec.data[0]])
+    out, hidden_vec = model(combined)
 
-print(f"Input tensor shape: {input_tensor.shape}")
-print(f"Hidden tensor shape: {hidden_vec.shape}")
-print(f"Combined shape: {combined.shape}")
-
-
-out, hid = model(combined)
-print(out.shape)
-print(hid.shape)
-
+print(f"RNN prediction: {out.data}")

@@ -1,7 +1,7 @@
 from .tensor import Tensor
 from .autograd import Scalar
 from random import uniform
-from functools import reduce
+from functools import reduce, wraps
 
 class Module():
     def __init__(self):
