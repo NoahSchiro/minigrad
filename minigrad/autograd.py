@@ -5,11 +5,15 @@ from math import exp
 class Scalar():
 
     def __init__(self,
-             data: Union[float, int],
+             data: Union[float, int, Scalar],
              parents: Tuple[Optional[Scalar], Optional[Scalar]] = (None, None), 
              op: str = ''):
 
-        self.data = data              # The actual data being stored
+        if isinstance(data, Scalar):
+            self.data = data.data
+        else:
+            self.data = data          # The actual data being stored
+
         self.grad = 0.0               # The gradient of this value
         self.parents = set(parents)   # Where this value came from 
         self._backward = lambda: None # The function to be called on backprop

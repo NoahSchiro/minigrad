@@ -1,13 +1,17 @@
 from io import open
 import random
 import glob
-import time
-import math
 import os
 import unicodedata
 import string
 import torch
 import torch.nn as nn
+
+# Some hyperparameters
+DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+LR = 0.005
+N_HIDDEN = 128
+
 
 # List of all possible letters and the length of this list
 ALL_LETTERS = string.ascii_letters + " .,;'"
@@ -35,7 +39,7 @@ def letterToIndex(letter):
 def letterToTensor(letter):
     tensor = torch.zeros(1, N_LETTERS)
     tensor[0][letterToIndex(letter)] = 1
-    return tensor
+    return tensor.to(DEVICE)
 
 # Turn a line into a <line_length x 1 x N_LETTERS>,
 # or an array of one-hot letter vectors
@@ -43,7 +47,7 @@ def lineToTensor(line):
     tensor = torch.zeros(len(line), 1, N_LETTERS)
     for li, letter in enumerate(line):
         tensor[li][0][letterToIndex(letter)] = 1
-    return tensor
+    return tensor.to(DEVICE)
 
 # Given a softmax output of what category
 # it is, convert this to the string version of the category
@@ -63,7 +67,7 @@ def randomTrainingExample():
     line = randomChoice(category_lines[category])
 
     # Convert the category and line to tensor versions
-    category_tensor = torch.tensor([all_categories.index(category)], dtype=torch.long)
+    category_tensor = torch.tensor([all_categories.index(category)], dtype=torch.long).to(DEVICE)
     line_tensor = lineToTensor(line)
 
     return category, line, category_tensor, line_tensor
@@ -80,6 +84,7 @@ for filename in glob.glob('data/names/*.txt'):
 
 N_CATEGORIES = len(all_categories)
 
+# Define the model
 class RNN(nn.Module):
     def __init__(self, input_size, hidden_size, output_size):
         super(RNN, self).__init__()
@@ -98,14 +103,9 @@ class RNN(nn.Module):
         return output, hidden
 
     def initHidden(self):
-        return torch.zeros(1, self.hidden_size)
+        return torch.zeros(1, self.hidden_size).to(DEVICE)
 
-# Define model, loss function, and optimizer
-# Hyper parameters
-LR = 0.005
-N_HIDDEN = 128
-
-rnn       = RNN(N_LETTERS, N_HIDDEN, N_CATEGORIES)
+rnn       = RNN(N_LETTERS, N_HIDDEN, N_CATEGORIES).to(DEVICE)
 loss_func = nn.NLLLoss()
 optim     = torch.optim.SGD(rnn.parameters(), lr=LR)
 
@@ -171,6 +171,6 @@ for i in range(10000 + 1):
     if guess_i == category_i:
         correct += 1
 
-    if i % 100 == 0:
+    if i % 1000 == 0:
         print(f"Accuracy: {(correct / total) * 100}")
         print(f"Line: {line} -> {guess}")
