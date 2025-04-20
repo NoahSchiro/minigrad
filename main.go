@@ -1,6 +1,6 @@
 package main
 
-import "fmt"
+//import "fmt"
 import nd "github.com/NoahSchiro/minigrad/ndarray"
 
 func main() {
@@ -15,11 +15,13 @@ func main() {
 		}
 	}
 
-	n, err := nd.New(data, []int{2, 3, 2})
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
+	n := nd.Rand([]int{2,3,2})
 
-	fmt.Println(n.Data())
+	n.Print()
+
+	n.UnaryApply(func(x float32) float32 {
+		return x * -1
+	})
+
+	n.Print()
 }
