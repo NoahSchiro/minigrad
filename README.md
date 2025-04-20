@@ -1,54 +1,21 @@
 # minigrad
-A minimal implementation of neural networks in Python. Inspired by [micrograd](https://github.com/karpathy/micrograd) and [pytorch](https://github.com/pytorch/pytorch)
+A minimal implementation of autograd and neural networks. Inspired by [micrograd](https://github.com/karpathy/micrograd) and [pytorch](https://github.com/pytorch/pytorch). This library is meant to be educational and not necessarily meant for production code.
 
--------------
+This software has two versions.
 
-Use:
-Similar to pytorch, this is really a tensor library with a thin neural networks wrapper built on top. The following shows tensor intialization and a few of the operations available
-```
-from minigrad.tensor import tensor
+v1.0 is an implementation in Python and treats floats as atomic values. It is designed to be minimal and clocks in under 500 lines of code.
 
-a = Tensor([[1, 2], [3, 4]])
-b = Tensor([[1, 2], [3, 4]])
+v2.0 is written in Go for some additional speed, a new challenge for me, and because Go is a simple language. This simplicity lends itself well to explaining the concepts of an autogradient engine. In this version, we will be treating matrices as the atomic value (as does most modern ML libraries) and we aim to come in under 1000 lines of code with more features than v1.0.
 
-c = a+b
-d = a*b
+## Features:
 
-d_relu = d.relu() # Element-wise relu
-c_sig  = c.sigmoid() # Element-wise sigmoid
-```
+- [ ] Autograd engine
+- [ ] Linear layers
+- [ ] RNN, LSTM
+- [ ] CNN
+- [ ] ReLU, SoftMax, Sigmoid
+- [ ] SGD and Adam optimizer
 
-Naturally, the most important aspect of a machine learning library is autogradient. Similar to the pytorch api, we can just call backward on any tensor to compute gradients
+## Concessions:
 
-```
-c_sig.backward()
-```
-
-Finally, if we wanted to actually step our tensor parameters in the direction that minimizes `c_sig`, then we just have to hand off the parameters to a stochastic gradient decent engine
-
-```
-sgd = SGD([a, b], lr=0.01)
-
-# Once gradients are computed, just call step!
-sgd.step()
-```
-
-To create your own neural networks, you need to extend off of nn.Module, again a very similar idea to pytorch. When you create your own module, there are three functions you need to define
-```
-from minigrad import nn
-
-def MyNet(nn.Module):
-    def __init__(self):
-        # Stateful information goes here!
-        pass
-
-    def forward(self, x):
-        # What do we do when we want to pass an input through the network?
-        return tensor
-
-    def parameters():
-        # Here we return all stateful information as a list
-        return 
-```
-
-There is much more functionality, but to learn more, check out the examples directory!
+Ideally, this library would be completely from scratch. However, in an effort to keep this concise and focused on the task at hand, I will use a third party linear algbra library. In the future we may replace this with our own hand crafted version.
