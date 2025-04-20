@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"strings"
+	"math/rand/v2"
 )
 
 type NdArray struct {
@@ -34,6 +35,28 @@ func New(data []float32, shape []int) (NdArray, error) {
 		shape: shape,
 		size: len(data),
 	}, nil
+}
+
+// Note that this cannot fail
+func Rand(shape []int) NdArray {
+
+	// Compute how much space we need
+	prod := 1
+	for i := range shape {
+		prod *= shape[i]
+	}
+	data := make([]float32, prod)
+
+	// Fill with random
+	for i := range data {
+		data[i] = rand.Float32()
+	}
+
+	return NdArray{
+		data: data,
+		shape: shape,
+		size: prod,
+	}
 }
 
 // Helper to compute the flat index from N-dimensional indices
@@ -67,10 +90,9 @@ func prettyPrintNd(data []float32, shape []int, indices []int, dim int) string {
     return b.String()
 }
 
-
 func (a NdArray) Print() {
 	s := prettyPrintNd(a.data, a.shape, []int{}, 0)
-	fmt.Print(s)
+	fmt.Println(s)
 }
 
 // Getters
