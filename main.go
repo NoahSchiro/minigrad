@@ -1,29 +1,35 @@
 package main
 
-import "fmt"
+//import "fmt"
 import nd "github.com/NoahSchiro/minigrad/ndarray"
 
 func main() {
 
-	data := make([]float32, 12)
+	shape := []int{2,2,2}
+	data_a := []float32{
+		1,0,
+		0,1,
 
-	for i := range data {
-		if i < 5 {
-			data[i] = 0.
-		} else {
-			data[i] = 1.
-		}
+		4,2,
+		2,4,
 	}
 
-	a := nd.Rand([]int{2,3,2})
-	b := nd.Rand([]int{3,2,2})
+	a := nd.New(data_a, shape)
+
+	data_b := []float32{
+		2,2,
+		2,2,
+
+		2,2,
+		2,2,
+	}
+
+	b := nd.New(data_b, shape)
 
 	a.Print()
 	b.Print()
-	c, err := a.Add(b)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
+
+	c := a.MatMul(b)
+
 	c.Print()
 }
