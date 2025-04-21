@@ -117,5 +117,79 @@ func TestIntArrayProduct(t *testing.T) {
 		t.Errorf("intArrayProduct failed on test c")
 	}
 }
-
 //----------- End Utils functions -----------
+
+//----------- Begin Unary Ops -----------
+func TestElemAdd(t *testing.T) {
+	// Should be all -1
+	a := NewFill(-1, []int{5,4,3})
+	a.ElemAdd(1)
+	for i := range a.data {
+		if a.data[i] != 0 {
+			t.Errorf("ElemAdd did not add correctly")
+		}
+	}
+
+	// Adding a negative num is our subtraction
+	a.ElemAdd(-2)
+	for i := range a.data {
+		if a.data[i] != -2 {
+			t.Errorf("ElemAdd did not subtract correctly")
+		}
+	}
+}
+
+func TestElemMul(t *testing.T) {
+	a := NewFill(10, []int{5,4,3})
+	a.ElemMul(2)
+	for i := range a.data {
+		if a.data[i] != 20 {
+			t.Errorf("ElemMul did not mul correctly")
+		}
+	}
+
+	// Adding a negative num is our subtraction
+	a.ElemMul(0)
+	for i := range a.data {
+		if a.data[i] != 0 {
+			t.Errorf("ElemMul did not mul correctly")
+		}
+	}
+}
+
+func TestNeg(t *testing.T) {
+	a := NewFill(-1, []int{5,4,3})
+	a.Neg()
+	for i := range a.data {
+		if a.data[i] != 1 {
+			t.Errorf("Neg did not flip the sign correctly")
+		}
+	}
+
+	// Adding a negative num is our subtraction
+	a.Neg()
+	for i := range a.data {
+		if a.data[i] != -1 {
+			t.Errorf("Neg did not flip the sign correctly")
+		}
+	}
+}
+
+func TestReLu(t *testing.T) {
+	a := NewFill(-1, []int{2,2})
+
+	a.ReLu()
+	for i := range a.data {
+		if a.data[i] != 0 {
+			t.Errorf("ReLu did not change a negative number")
+		}
+	}
+
+	b := NewFill(1, []int{2,2})
+	for i := range b.data {
+		if b.data[i] != 1 {
+			t.Errorf("ReLu changed a positive number")
+		}
+	}
+}
+//----------- End Unary Ops -----------
