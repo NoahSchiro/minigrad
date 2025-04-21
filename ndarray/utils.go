@@ -56,5 +56,3 @@ func prettyPrintNd(data []float32, shape []int, indices []int, dim int) string {
     b.WriteString("]")
     return b.String()
 }
-
-

@@ -59,8 +59,8 @@ func TestEmpty(t *testing.T) {
 }
 
 //----------- End Init functions -----------
-//----------- Begin getter functions -----------
 
+//----------- Begin getter functions -----------
 func TestGetters(t *testing.T) {
 
 	input_data := []float32{
@@ -83,3 +83,39 @@ func TestGetters(t *testing.T) {
 	if size != 4 { t.Errorf("Fetched size in NdArray getter does not match") }
 	if ndim != 2 { t.Errorf("Fetched ndim in NdArray getter does not match") }
 }
+//----------- End getter functions -----------
+
+//----------- Begin Utils functions -----------
+
+func TestCheckShape(t *testing.T) {
+	a := Rand([]int{1,2})
+	b := Rand([]int{1,2})
+	c := Rand([]int{2,1})
+
+	if !checkShape(a,b) {
+		t.Errorf("checkShape returned false when it should be true")
+	}
+	if checkShape(a,c) {
+		t.Errorf("checkShape returned true when it should be false")
+	}
+}
+//intArrayProduct(data []int)
+
+func TestIntArrayProduct(t *testing.T) {
+	a := intArrayProduct([]int {1,2,3,4,5})
+	if a != 120 {
+		t.Errorf("intArrayProduct failed on test A")
+	}
+	
+	b := intArrayProduct([]int {34, 56})
+	if b != 1904 {
+		t.Errorf("intArrayProduct failed on test B")
+	}
+	
+	c := intArrayProduct([]int {5,5})
+	if c != 25 {
+		t.Errorf("intArrayProduct failed on test c")
+	}
+}
+
+//----------- End Utils functions -----------
