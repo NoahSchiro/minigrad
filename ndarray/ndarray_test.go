@@ -193,3 +193,95 @@ func TestReLu(t *testing.T) {
 	}
 }
 //----------- End Unary Ops -----------
+
+//----------- Begin Binary Ops -----------
+func TestAdd(t *testing.T) {
+	a := NewFill(3, []int{3,3,3})
+	b := NewFill(4, []int{3,3,3})
+
+	c := a.Add(b)
+
+	shape := c.Shape()
+	size := c.Size()
+	ndim := c.Ndim()
+
+	if ndim != 3 { t.Errorf("Ndim incorrect after add operation") }
+	if size != 3*3*3 { t.Errorf("Size incorrect after add operation") }
+
+	for i := range shape {
+		if shape[i] != 3 {
+			t.Errorf("Shape incorrect after add operation")
+		}
+	}
+}
+
+func BenchmarkAdd(b *testing.B) {
+	x := Rand([]int{10,1000,1000})
+	y := Rand([]int{10,1000,1000})
+
+	for b.Loop() {
+		x.Add(y)
+	}
+}
+//----------- End Binary Ops -----------
+
+
+//----------- Begin Ops -----------
+func TestMul(t *testing.T) {
+	a := NewFill(3, []int{2,2})
+	b := NewFill(4, []int{2,2})
+	c := a.MatMul(b)
+	for i := range c.data {
+		if c.data[i] != 24 {
+			t.Errorf("MatMul result has incorrect data")
+		}
+	}
+	if c.size != 4 {
+		t.Errorf("MatMul result has incorrect size")
+	}
+	for i := range c.shape {
+		if c.shape[i] != 2 {
+			t.Errorf("MatMul result has incorrect shape")
+		}
+	}
+	
+	d := NewFill(3, []int{5,3})
+	e := NewFill(2, []int{3,2})
+	f := d.MatMul(e)
+	for i := range f.data {
+		if f.data[i] != 18 {
+			t.Errorf("MatMul result has incorrect data")
+		}
+	}
+	if f.size != 5*2 {
+		t.Errorf("MatMul result has incorrect size")
+	}
+	if f.shape[0] != 5 || f.shape[1] != 2 {
+		t.Errorf("MatMul doesn't have the correct shape")
+	}
+	
+	x := NewFill(-1.3, []int{3,6,2})
+	y := NewFill(5.4, []int{3,2,7})
+	z := x.MatMul(y)
+	for i := range z.data {
+		if z.data[i] != -14.04 {
+			t.Errorf("MatMul result has incorrect data")
+		}
+	}
+	if z.size != 3*6*7 {
+		t.Errorf("MatMul result has incorrect size")
+	}
+	if z.shape[0] != 3 || z.shape[1] != 6 || z.shape[2] != 7 {
+		t.Errorf("MatMul doesn't have the correct shape")
+	}
+}
+
+func BenchmarkMatMul(b *testing.B) {
+	x := Rand([]int{1,1000,1000})
+	y := Rand([]int{1,1000,1000})
+
+	for b.Loop() {
+		x.MatMul(y)
+	}
+}
+//----------- End Ops -----------
