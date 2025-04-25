@@ -1,7 +1,7 @@
 package main
 
-//import "fmt"
-import nd "github.com/NoahSchiro/minigrad/ndarray"
+import "fmt"
+import tensor "github.com/NoahSchiro/minigrad/tensor"
 
 func main() {
 
@@ -14,22 +14,15 @@ func main() {
 		2,4,
 	}
 
-	a := nd.New(data_a, shape)
+	a := tensor.New(data_a, shape)
+	emp := tensor.Empty()
+	newFill := tensor.NewFill(2, shape)
+	zero := tensor.Zero(shape)
+	rand := tensor.Rand(shape)
 
-	data_b := []float32{
-		2,2,
-		2,2,
-
-		2,2,
-		2,2,
-	}
-
-	b := nd.New(data_b, shape)
-
-	a.Print()
-	b.Print()
-
-	c := a.MatMul(b)
-
-	c.Print()
+    fmt.Println(a.Print())
+    fmt.Println(emp.Print())
+    fmt.Println(newFill.Print())
+    fmt.Println(zero.Print())
+    fmt.Println(rand.Print())
 }

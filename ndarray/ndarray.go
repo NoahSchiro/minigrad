@@ -1,9 +1,6 @@
 package ndarray
 
-import (
-	"fmt"
-	"math/rand/v2"
-)
+import "math/rand/v2"
 
 type NdArray struct {
 	data []float32
@@ -54,8 +51,10 @@ func NewFill(data float32, shape []int) NdArray {
 	}
 }
 
+// Return a zeroed out array of specified shape
+func Zero(shape []int) NdArray { return NewFill(0, shape) }
+
 // Given a shape, init a random ndarray with floats in range [0,1]
-// Note that this cannot fail
 func Rand(shape []int) NdArray {
 
 	// Compute how much space we need
@@ -75,9 +74,9 @@ func Rand(shape []int) NdArray {
 	}
 }
 
-func (a NdArray) Print() {
+func (a NdArray) Print() string {
 	s := prettyPrintNd(a.data, a.shape, []int{}, 0)
-	fmt.Println(s)
+	return s
 }
 
 // Getters
