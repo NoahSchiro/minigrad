@@ -1,7 +1,7 @@
 package main
 
 import "fmt"
-import tensor "github.com/NoahSchiro/minigrad/tensor"
+import tensor "github.com/NoahSchiro/minigrad/pkg/tensor"
 
 func main() {
 

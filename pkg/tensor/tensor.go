@@ -1,6 +1,6 @@
 package tensor
 
-import nd "github.com/NoahSchiro/minigrad/ndarray"
+import nd "github.com/NoahSchiro/minigrad/pkg/ndarray"
 
 type Tensor struct {
 	data nd.NdArray      // Content

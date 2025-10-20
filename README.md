@@ -15,7 +15,3 @@ v2.0 is written in Go for some additional speed, a new challenge for me, and bec
 - [ ] CNN
 - [ ] ReLU, SoftMax, Sigmoid
 - [ ] SGD and Adam optimizer
-
-## Concessions:
-
-Ideally, this library would be completely from scratch. However, in an effort to keep this concise and focused on the task at hand, I will use a third party linear algbra library. In the future we may replace this with our own hand crafted version.
