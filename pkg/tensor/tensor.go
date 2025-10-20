@@ -72,3 +72,16 @@ func (a Tensor) Print() string {
 	s += "\n)"
 	return s
 }
+
+// Getters
+func (a Tensor) Shape() []int {
+	return a.data.Shape();
+}
+
+func (a Tensor) Size() int {
+	return a.data.Size();
+} 
+
+func (a Tensor) Ndim() int {
+	return a.data.Ndim();
+}
