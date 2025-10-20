@@ -57,7 +57,6 @@ func TestEmpty(t *testing.T) {
 	if a.data[0] != 0 { t.Errorf("Empty Init failed (wrong data)") }
 	if a.shape[0] != 1 { t.Errorf("Empty Init failed (wrong shape)") }
 }
-
 //----------- End Init functions -----------
 
 //----------- Begin getter functions -----------
@@ -83,10 +82,61 @@ func TestGetters(t *testing.T) {
 	if size != 4 { t.Errorf("Fetched size in NdArray getter does not match") }
 	if ndim != 2 { t.Errorf("Fetched ndim in NdArray getter does not match") }
 }
+
+func TestNdArrayGet(t *testing.T) {
+
+	// 1,2,
+	// 3,4
+	a := New([]float32{1.,2.,3.,4.}, []int{2,2})
+
+	// Provide indices larger than array
+	ans, err := a.Get([]int{3,3})
+	if err == nil {
+		t.Errorf("Get should have failed on out of bounds index")
+	}
+	_, err = a.Get([]int{0,3})
+	if err == nil {
+		t.Errorf("Get should have failed on out of bounds index")
+	}
+	_, err = a.Get([]int{3,0})
+	if err == nil {
+		t.Errorf("Get should have failed on out of bounds index")
+	}
+
+	// Provide negative indices
+	_, err = a.Get([]int{-1,0})
+	if err == nil {
+		t.Errorf("Get should have failed on negative index")
+	}
+
+	// Provide more dimensions then expected
+	_, err = a.Get([]int{0,0,0})
+	if err == nil {
+		t.Errorf("Get should have failed on too many index dims")
+	}
+
+	// Try to get an answer
+	ans, err = a.Get([]int{1,1})
+	if err != nil {
+		t.Errorf("Get shouldn't have failed")
+	}
+	if ans != 4.0 {
+		t.Errorf("Get answer was wrong. Got %f, expected 4.0", ans)
+	}
+
+	// Try another
+	ans, err = a.Get([]int{0,0})
+	if err != nil {
+		t.Errorf("Get shouldn't have failed")
+	}
+	if ans != 1.0 {
+		t.Errorf("Get answer was wrong. Got %f, expected 1.0", ans)
+	}
+}
+
 //----------- End getter functions -----------
 
 //----------- Begin Utils functions -----------
-
 func TestCheckShape(t *testing.T) {
 	a := Rand([]int{1,2})
 	b := Rand([]int{1,2})

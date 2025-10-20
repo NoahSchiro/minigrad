@@ -1,5 +1,6 @@
 package ndarray
 
+import "fmt"
 import "math/rand/v2"
 
 type NdArray struct {
@@ -74,9 +75,32 @@ func Rand(shape []int) NdArray {
 	}
 }
 
+// Display
 func (a NdArray) Print() string {
 	s := prettyPrintNd(a.data, a.shape, []int{}, 0)
 	return s
+}
+
+// Get a certain index within the nd array
+func (a NdArray) Get(idxs []int) (float32, error) {
+	if len(idxs) != a.ndim {
+		return 0, fmt.Errorf("number of indices %d does not match array dimensions %d", len(idxs), len(a.shape))
+	}
+
+	index := 0
+	stride := 1
+	for i := a.ndim - 1; i >= 0; i-- {
+		if idxs[i] < 0 || idxs[i] >= a.shape[i] {
+			return 0, fmt.Errorf("index out of bounds: dimension %d, index %d out of range [0, %d]", i, idxs[i], a.shape[i])
+		}
+		index += idxs[i] * stride
+		stride *= a.shape[i];
+	}
+
+	if index >= a.size {
+		return 0, fmt.Errorf("calculated flat index %d is out of bounds for data slice of length %d", index, a.size)
+	}
+	return a.data[index], nil 
 }
 
 // Getters
