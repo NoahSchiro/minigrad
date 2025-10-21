@@ -2,7 +2,6 @@ package ndarray
 
 import "testing"
 
-
 //----------- Begin Init functions -----------
 func TestNdArrayNew(t *testing.T) {
 
@@ -38,7 +37,7 @@ func TestNdArrayRand(t *testing.T) {
 	if a.ndim != 3 { t.Errorf("Number of dims in Rand is wrong") }
 }
 
-func TestNdArrayFill(t *testing.T) {
+func TestNdArrayNewFill(t *testing.T) {
 	a := NewFill(-1, []int{5,4,3})
 	
 	if a.shape[0] != 5 { t.Errorf("Shape of NdArray in NewFill didn't work")}
@@ -58,6 +57,18 @@ func TestEmpty(t *testing.T) {
 	if a.shape[0] != 1 { t.Errorf("Empty Init failed (wrong shape)") }
 }
 //----------- End Init functions -----------
+
+func TestNdArrayFill(t *testing.T) {
+
+	a := Rand([]int{3,3,3})
+	a.Fill(1.0)
+
+	for elem := range a.data {
+		if a.data[elem] != 1.0 {
+			t.Errorf("Filling an initialized array did not work")
+		}
+	}
+}
 
 //----------- Begin getter functions -----------
 func TestGetters(t *testing.T) {

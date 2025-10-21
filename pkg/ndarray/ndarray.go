@@ -103,6 +103,12 @@ func (a NdArray) Get(idxs []int) (float32, error) {
 	return a.data[index], nil 
 }
 
+func (a *NdArray) Fill(value float32) {
+	for i := 0; i < a.size; i++ {
+		a.data[i] = value;
+	}
+}
+
 // Getters
 func (a NdArray) Shape() []int {
 	return a.shape
