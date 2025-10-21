@@ -12,7 +12,7 @@ func (a *Tensor) ElemMul(input float32) {
 }
 
 func (a *Tensor) Neg() {
-	a.data.ElemNeg()
+	a.data.Neg()
 	//Some gradient stuff?
 }
 

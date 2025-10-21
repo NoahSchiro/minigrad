@@ -69,3 +69,40 @@ func TestGetters(t *testing.T) {
 	if size != 4 { t.Errorf("Fetched size in Tensor getter does not match") }
 	if ndim != 2 { t.Errorf("Fetched ndim in Tensor getter does not match") }
 }
+
+//----------- End getter functions -----------
+
+//----------- Begin backwards functions -----------
+func TestBuildTopo(t *testing.T) {
+	a := NewFill(1, []int{1})
+	b := NewFill(2, []int{1})
+	c := NewFill(3, []int{1})
+	d := NewFill(4, []int{1})
+
+	d.p1 = &b
+	d.p2 = &c
+	
+	b.p1 = &a
+	c.p1 = &a
+
+	// Ordering should be a, b, c, d
+	//     b --> d
+	//    ^     ^
+	//   /     /
+	// a --> c
+	topo := buildTopo(&d)
+
+	if topo[0] != &a {
+		fmt.Println("Topological ordering is wrong")
+	}
+	if topo[1] != &b {
+		fmt.Println("Topological ordering is wrong")
+	}
+	if topo[2] != &c {
+		fmt.Println("Topological ordering is wrong")
+	}
+	if topo[3] != &d {
+		fmt.Println("Topological ordering is wrong")
+	}
+}
+
