@@ -213,46 +213,46 @@ func TestIntArrayProduct(t *testing.T) {
 //----------- End Utils functions -----------
 
 //----------- Begin Unary Ops -----------
-func TestElemAdd(t *testing.T) {
+func TestScalarAdd(t *testing.T) {
 	
 	// Should be all -1
 	a := NewFill(-1, []int{5,4,3})
-	b := a.ElemAdd(1)
+	b := a.ScalarAdd(1)
 
 	for i := range b.data {
 		if b.data[i] != 0 {
-			t.Errorf("ElemAdd did not add correctly")
+			t.Errorf("ScalarAdd did not add correctly")
 		}
 	}
 	
 	// Adding a negative num is our subtraction
-	c := a.ElemAdd(-2)
+	c := a.ScalarAdd(-2)
 	for i := range c.data {
 		if c.data[i] != -3 {
-			t.Errorf("ElemAdd did not subtract correctly")
+			t.Errorf("ScalarAdd did not subtract correctly")
 		}
 	}
 
 	// Original tensor should be the same
 	for i := range a.data {
 		if a.data[i] == -2 {
-			t.Errorf("NdArray A should be unaffected by ElemAdd!")
+			t.Errorf("NdArray A should be unaffected by ScalarAdd!")
 		}
 	}
 }
 
-func TestElemMul(t *testing.T) {
+func TestScalarMul(t *testing.T) {
 	a := NewFill(10, []int{5,4,3})
-	b := a.ElemMul(2)
+	b := a.ScalarMul(2)
 	for i := range b.data {
 		if b.data[i] != 20 {
-			t.Errorf("ElemMul did not mul correctly")
+			t.Errorf("ScalarMul did not mul correctly")
 		}
 	}
 
 	for i := range a.data {
 		if a.data[i] != 10 {
-			t.Errorf("NdArray A should be unaffected by ElemMul!")
+			t.Errorf("NdArray A should be unaffected by ScalarMul!")
 		}
 	}
 }

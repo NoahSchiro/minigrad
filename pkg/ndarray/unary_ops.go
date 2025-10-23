@@ -13,14 +13,14 @@ func (a NdArray) UnaryApply(f func(float32) float32) NdArray {
 }
 
 // Add the input to each element
-func (a NdArray) ElemAdd(input float32) NdArray {
+func (a NdArray) ScalarAdd(input float32) NdArray {
 	return a.UnaryApply(func(x float32) float32 {
 		return x+input
 	})
 }
 
 // Add the input to each element
-func (a NdArray) ElemMul(input float32) NdArray {
+func (a NdArray) ScalarMul(input float32) NdArray {
 	return a.UnaryApply(func(x float32) float32 {
 		return x*input
 	})

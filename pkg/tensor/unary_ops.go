@@ -2,7 +2,7 @@ package tensor;
 
 import nd "github.com/NoahSchiro/minigrad/pkg/ndarray"
 
-func (a *Tensor) ElemAdd(input float32) Tensor {
+func (a *Tensor) ScalarAdd(input float32) Tensor {
 
 	// Define the backward function
 	backward := func(self *Tensor) {
@@ -11,7 +11,7 @@ func (a *Tensor) ElemAdd(input float32) Tensor {
 	}
 
 	return Tensor{
-		data: a.data.ElemAdd(input),
+		data: a.data.ScalarAdd(input),
 		grad: nd.Zero(a.Shape()),
 		b: backward,
 		p1: a,
@@ -19,18 +19,18 @@ func (a *Tensor) ElemAdd(input float32) Tensor {
 	}
 }
 
-func (a *Tensor) ElemMul(input float32) Tensor {
+func (a *Tensor) ScalarMul(input float32) Tensor {
 	
 	// Define the backward function
 	backward := func(self *Tensor) {
 		// dL/da = dL/dself * input
 		a.grad = a.grad.Add(
-			self.grad.ElemMul(input),
+			self.grad.ScalarMul(input),
 		)
 	}
 
 	return Tensor{
-		data: a.data.ElemMul(input),
+		data: a.data.ScalarMul(input),
 		grad: nd.Zero(a.Shape()),
 		b: backward,
 		p1: a,
