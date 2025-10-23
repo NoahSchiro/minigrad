@@ -56,7 +56,21 @@ func TestEmpty(t *testing.T) {
 	if a.data[0] != 0 { t.Errorf("Empty Init failed (wrong data)") }
 	if a.shape[0] != 1 { t.Errorf("Empty Init failed (wrong shape)") }
 }
-//----------- End Init functions -----------
+
+func TestClone(t *testing.T) {
+	a := New([]float32{1}, []int{1})
+	b := a.Clone()
+
+	b.data[0] = 4
+
+	if b.data[0] != 4 {
+		t.Errorf("Shouldn't be possible")
+	}
+
+	if a.data[0] != 1 {
+		t.Errorf("NdArray A should be unaffected by clone")
+	}
+}
 
 func TestNdArrayFill(t *testing.T) {
 
@@ -69,6 +83,7 @@ func TestNdArrayFill(t *testing.T) {
 		}
 	}
 }
+//----------- End Init functions -----------
 
 //----------- Begin getter functions -----------
 func TestGetters(t *testing.T) {

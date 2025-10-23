@@ -75,6 +75,20 @@ func Rand(shape []int) NdArray {
 	}
 }
 
+func (a NdArray) Clone() NdArray {
+	new_data := make([]float32, a.size)
+	copy(new_data, a.data)
+	new_shape := make([]int, a.ndim)
+	copy(new_shape, a.shape)
+
+	return NdArray{
+		data: new_data,
+		shape: new_shape,
+		size: a.size,
+		ndim: a.ndim,
+	}
+}
+
 // Display
 func (a NdArray) Print() string {
 	s := prettyPrintNd(a.data, a.shape, []int{}, 0)

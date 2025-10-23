@@ -8,18 +8,13 @@ func (a NdArray) Add(b NdArray) NdArray {
 		panic("NdArray add error: Shapes must match")
 	}
 
-	data := make([]float32, a.size)
+	result := a.Clone()
 
-	for i := range a.data {
-		data[i] = a.data[i] + b.data[i]
+	for i := range result.data {
+		result.data[i] += b.data[i]
 	}
 
-	return NdArray{
-		data: data,
-		shape: a.shape,
-		size: a.size,
-		ndim: a.ndim,
-	}
+	return result
 }
 
 // Matrix multiplication

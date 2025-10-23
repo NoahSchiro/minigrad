@@ -2,14 +2,8 @@ package ndarray
 
 func (a NdArray) UnaryApply(f func(float32) float32) NdArray {
 
-	new_data := make([]float32, a.size)
-	copy(new_data, a.data)
-	
-	new_shape := make([]int, a.ndim)
-	copy(new_shape, a.shape)
-
 	// Create a copy
-	result := New(new_data, new_shape)
+	result := a.Clone()
 
 	for i := range result.data {
 		result.data[i] = f(a.data[i])
