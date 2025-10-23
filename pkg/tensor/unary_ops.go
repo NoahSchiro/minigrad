@@ -1,10 +1,7 @@
 package tensor;
 
-func (a *Tensor) ElemAdd(input float32) {
-	a.data.ElemAdd(input)
-
-	//Some gradient stuff?
-}
+// func (a *Tensor) ElemAdd(input float32) Tensor {
+// }
 
 func (a *Tensor) ElemMul(input float32) {
 	a.data.ElemMul(input)

@@ -182,73 +182,86 @@ func TestIntArrayProduct(t *testing.T) {
 
 //----------- Begin Unary Ops -----------
 func TestElemAdd(t *testing.T) {
+	
 	// Should be all -1
 	a := NewFill(-1, []int{5,4,3})
-	a.ElemAdd(1)
-	for i := range a.data {
-		if a.data[i] != 0 {
+	b := a.ElemAdd(1)
+
+	for i := range b.data {
+		if b.data[i] != 0 {
 			t.Errorf("ElemAdd did not add correctly")
 		}
 	}
-
+	
 	// Adding a negative num is our subtraction
-	a.ElemAdd(-2)
-	for i := range a.data {
-		if a.data[i] != -2 {
+	c := a.ElemAdd(-2)
+	for i := range c.data {
+		if c.data[i] != -3 {
 			t.Errorf("ElemAdd did not subtract correctly")
+		}
+	}
+
+	// Original tensor should be the same
+	for i := range a.data {
+		if a.data[i] == -2 {
+			t.Errorf("NdArray A should be unaffected by ElemAdd!")
 		}
 	}
 }
 
 func TestElemMul(t *testing.T) {
 	a := NewFill(10, []int{5,4,3})
-	a.ElemMul(2)
-	for i := range a.data {
-		if a.data[i] != 20 {
+	b := a.ElemMul(2)
+	for i := range b.data {
+		if b.data[i] != 20 {
 			t.Errorf("ElemMul did not mul correctly")
 		}
 	}
 
-	// Adding a negative num is our subtraction
-	a.ElemMul(0)
 	for i := range a.data {
-		if a.data[i] != 0 {
-			t.Errorf("ElemMul did not mul correctly")
+		if a.data[i] != 10 {
+			t.Errorf("NdArray A should be unaffected by ElemMul!")
 		}
 	}
 }
 
 func TestNeg(t *testing.T) {
 	a := NewFill(-1, []int{5,4,3})
-	a.Neg()
-	for i := range a.data {
-		if a.data[i] != 1 {
+	b := a.Neg()
+
+	for i := range b.data {
+		if b.data[i] != 1 {
 			t.Errorf("Neg did not flip the sign correctly")
 		}
 	}
 
-	// Adding a negative num is our subtraction
-	a.Neg()
 	for i := range a.data {
 		if a.data[i] != -1 {
-			t.Errorf("Neg did not flip the sign correctly")
+			t.Errorf("NdArray A should be unaffected by Neg")
 		}
 	}
 }
 
 func TestReLu(t *testing.T) {
 	a := NewFill(-1, []int{2,2})
+	b := a.ReLu()
 
-	a.ReLu()
-	for i := range a.data {
-		if a.data[i] != 0 {
+	for i := range b.data {
+		if b.data[i] != 0 {
 			t.Errorf("ReLu did not change a negative number")
 		}
 	}
 
-	b := NewFill(1, []int{2,2})
-	for i := range b.data {
-		if b.data[i] != 1 {
+	for i := range a.data {
+		if a.data[i] != -1 {
+			t.Errorf("NdArray A should be unaffected by ReLu")
+		}
+	}
+
+	c := NewFill(1, []int{2,2})
+	c = c.ReLu()
+	for i := range c.data {
+		if c.data[i] != 1 {
 			t.Errorf("ReLu changed a positive number")
 		}
 	}
