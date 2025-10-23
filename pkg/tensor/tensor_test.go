@@ -105,4 +105,139 @@ func TestBuildTopo(t *testing.T) {
 		fmt.Println("Topological ordering is wrong")
 	}
 }
+//----------- End backwards functions -----------
+
+//----------- Begin unary functions -----------
+func TestScalarAdd(t *testing.T) {
+	a := New([]float32{1,2}, []int{2})
+	b := a.ScalarAdd(2)
+
+	b.Backward()
+
+	elem, _ := b.data.Get([]int{0})
+	if elem != 3 {
+		fmt.Println("ScalarAdd did not add correctly")
+	}
+	elem, _ = b.data.Get([]int{1})
+	if elem != 5 {
+		fmt.Println("ScalarAdd did not add correctly")
+	}
+	elem, _ = b.grad.Get([]int{0})
+	if elem != 1 {
+		fmt.Println("ScalarAdd gradient incorrect")
+	}
+	elem, _ = b.grad.Get([]int{1})
+	if elem != 1 {
+		fmt.Println("ScalarAdd gradient incorrect")
+	}
+	elem, _ = a.grad.Get([]int{0})
+	if elem != 1 {
+		fmt.Println("ScalarAdd gradient incorrect")
+	}
+	elem, _ = a.grad.Get([]int{1})
+	if elem != 1 {
+		fmt.Println("ScalarAdd gradient incorrect")
+	}
+}
+
+func TestScalarMul(t *testing.T) {
+	a := New([]float32{1,2}, []int{2})
+	b := a.ScalarMul(2)
+
+	b.Backward()
+
+	elem, _ := b.data.Get([]int{0})
+	if elem != 2 {
+		fmt.Println("ScalarAdd did not add correctly")
+	}
+	elem, _ = b.data.Get([]int{1})
+	if elem != 4 {
+		fmt.Println("ScalarAdd did not add correctly")
+	}
+	elem, _ = b.grad.Get([]int{0})
+	if elem != 1 {
+		fmt.Println("ScalarAdd gradient incorrect")
+	}
+	elem, _ = b.grad.Get([]int{1})
+	if elem != 1 {
+		fmt.Println("ScalarAdd gradient incorrect")
+	}
+	elem, _ = a.grad.Get([]int{0})
+	if elem != 2 {
+		fmt.Println("ScalarAdd gradient incorrect")
+	}
+	elem, _ = a.grad.Get([]int{1})
+	if elem != 1 {
+		fmt.Println("ScalarAdd gradient incorrect")
+	}
+}
+
+func TestNeg(t *testing.T) {
+	a := New([]float32{1,2}, []int{2})
+	b := a.Neg()
+
+	b.Backward()
+
+	elem, _ := b.data.Get([]int{0})
+	if elem != -1 {
+		fmt.Println("ScalarAdd did not add correctly")
+	}
+	elem, _ = b.data.Get([]int{1})
+	if elem != -2 {
+		fmt.Println("ScalarAdd did not add correctly")
+	}
+	elem, _ = b.grad.Get([]int{0})
+	if elem != 1 {
+		fmt.Println("ScalarAdd gradient incorrect")
+	}
+	elem, _ = b.grad.Get([]int{1})
+	if elem != 1 {
+		fmt.Println("ScalarAdd gradient incorrect")
+	}
+	elem, _ = a.grad.Get([]int{0})
+	if elem != -1 {
+		fmt.Println("ScalarAdd gradient incorrect")
+	}
+	elem, _ = a.grad.Get([]int{1})
+	if elem != -1 {
+		fmt.Println("ScalarAdd gradient incorrect")
+	}
+}
+//----------- End unary functions -----------
+//----------- Begin binary functions -----------
+func TestAdd(t *testing.T) {
+	a := New(
+		[]float32{1,2,3,4},
+		[]int{2,2},
+	)
+	b := New(
+		[]float32{-4,-3,-2,-1},
+		[]int{2,2},
+	)
+	c := a.Add(&b)
+	c.Backward()
+
+	elem, _ := c.data.Get([]int{0,0})
+	if elem != -3 {
+		fmt.Println("Add did not add correctly")
+	}
+	elem, _ = c.data.Get([]int{1,0})
+	if elem != 1 {
+		fmt.Println("Add did not add correctly")
+	}
+
+	elem, _ = c.grad.Get([]int{1,1})
+	if elem != 1 {
+		fmt.Println("Add gradient incorrect")
+	}
+	elem, _ = b.grad.Get([]int{1,0})
+	if elem != 1 {
+		fmt.Println("Add gradient incorrect")
+	}
+	elem, _ = a.grad.Get([]int{0,1})
+	if elem != 1 {
+		fmt.Println("Add gradient incorrect")
+	}
+}
+//----------- End binary functions -----------
 

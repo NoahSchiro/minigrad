@@ -5,8 +5,8 @@ import tensor "github.com/NoahSchiro/minigrad/pkg/tensor"
 
 func main() {
 
-	a := tensor.New([]float32{2}, []int{1})
-	b := a.ScalarMul(2)
+	a := tensor.New([]float32{1,2}, []int{2})
+	b := a.ScalarAdd(2)
 	c := b.Neg()
 	d := c.ScalarMul(4)
 
