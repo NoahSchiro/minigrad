@@ -38,14 +38,31 @@ func TestNdArrayRand(t *testing.T) {
 }
 
 func TestNdArrayNewFill(t *testing.T) {
-	a := NewFill(-1, []int{5,4,3})
+	shape := []int{5,4,3}
+	a := NewFill(-1, shape)
 	
-	if a.shape[0] != 5 { t.Errorf("Shape of NdArray in NewFill didn't work")}
-	if a.shape[1] != 4 { t.Errorf("Shape of NdArray in NewFill didn't work")}
-	if a.shape[2] != 3 { t.Errorf("Shape of NdArray in NewFill didn't work")}
-	if a.size != 5*4*3 { t.Errorf("Size was not computed correctly in NewFill") }
-	if a.ndim != 3 { t.Errorf("Number of dims in NewFill is wrong") }
-	if a.data[30] != -1 { t.Errorf("Data fill was wrong in NewFill") }
+	if a.shape[0] != 5 {
+		t.Errorf("Shape of NdArray in NewFill didn't work")
+	}
+	if a.shape[1] != 4 {
+		t.Errorf("Shape of NdArray in NewFill didn't work")
+	}
+	if a.shape[2] != 3 {
+		t.Errorf("Shape of NdArray in NewFill didn't work")
+	}
+	if a.size != 5*4*3 {
+		t.Errorf("Size was not computed correctly in NewFill")
+	}
+	if a.ndim != 3 {
+		t.Errorf("Number of dims in NewFill is wrong")
+	}
+	if a.data[30] != -1 {
+		t.Errorf("Data fill was wrong in NewFill")
+	}
+	shape[1] = 42
+	if a.shape[1] == 42 {
+		t.Errorf("Two objects are sharing memory")
+	}
 }
 
 func TestEmpty(t *testing.T) {

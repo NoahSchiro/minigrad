@@ -1,16 +1,24 @@
 package main
 
 import "fmt"
-import nd "github.com/NoahSchiro/minigrad/pkg/ndarray"
-//import tensor "github.com/NoahSchiro/minigrad/pkg/tensor"
+import tensor "github.com/NoahSchiro/minigrad/pkg/tensor"
 
 func main() {
 
-	a := nd.New([]float32{1.,2.,3.,4.}, []int{2,2})
+	a := tensor.New([]float32{1}, []int{1})
+	b := a.ElemAdd(1)
+	c := b.ElemAdd(1)
+	d := c.ElemAdd(1)
 
-	fmt.Println(a.Print())
-	elem, err := a.Get([]int{0,0})
+	fmt.Println("a =", a.Print())
+	fmt.Println("b =", b.Print())
+	fmt.Println("c =", c.Print())
+	fmt.Println("d =", d.Print())
 
-	fmt.Println(err)
-	fmt.Println(elem)
+	d.Backward()
+
+	fmt.Println("a =", a.Print())
+	fmt.Println("b =", b.Print())
+	fmt.Println("c =", c.Print())
+	fmt.Println("d =", d.Print())
 }

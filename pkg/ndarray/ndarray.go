@@ -43,10 +43,12 @@ func NewFill(data float32, shape []int) NdArray {
 
 	array := make([]float32, prod)
 	for i := range array { array[i] = data }
+	new_shape := make([]int, len(shape))
+	copy(new_shape, shape)
 
 	return NdArray{
 		data: array,
-		shape: shape,
+		shape: new_shape,
 		size: prod,
 		ndim: len(shape),
 	}
@@ -125,7 +127,9 @@ func (a *NdArray) Fill(value float32) {
 
 // Getters
 func (a NdArray) Shape() []int {
-	return a.shape
+	shape := make([]int, a.ndim)
+	copy(shape, a.shape)
+	return shape
 }
 func (a NdArray) Size() int {
 	return a.size

@@ -68,7 +68,10 @@ func Rand(shape []int) Tensor {
 // Return the tensor as a string, for debugging
 func (a Tensor) Print() string {
 	s := "Tensor(\n  "
+	s += "data = "
 	s += a.data.Print()
+	s += "\n  grad = "
+	s += a.grad.Print()
 	s += "\n)"
 	return s
 }
