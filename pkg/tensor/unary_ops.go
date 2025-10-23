@@ -19,16 +19,43 @@ func (a *Tensor) ElemAdd(input float32) Tensor {
 	}
 }
 
-func (a *Tensor) ElemMul(input float32) {
-	a.data.ElemMul(input)
-	//Some gradient stuff?
+func (a *Tensor) ElemMul(input float32) Tensor {
+	
+	// Define the backward function
+	backward := func(self *Tensor) {
+		// dL/da = dL/dself * input
+		a.grad = a.grad.Add(
+			self.grad.ElemMul(input),
+		)
+	}
+
+	return Tensor{
+		data: a.data.ElemMul(input),
+		grad: nd.Zero(a.Shape()),
+		b: backward,
+		p1: a,
+		p2: nil,
+	}
 }
 
-func (a *Tensor) Neg() {
-	a.data.Neg()
-	//Some gradient stuff?
+func (a *Tensor) Neg() Tensor {
+	
+	// Define the backward function
+	backward := func(self *Tensor) {
+		// dL/da = dL/dself * input
+		a.grad = a.grad.Add(
+			self.grad.Neg(),
+		)
+	}
+
+	return Tensor{
+		data: a.data.Neg(),
+		grad: nd.Zero(a.Shape()),
+		b: backward,
+		p1: a,
+		p2: nil,
+	}
 }
 
-func (a *Tensor) ReLu() {
-	a.data.ReLu()
-}
+// func (a *Tensor) ReLu() Tensor {
+// }

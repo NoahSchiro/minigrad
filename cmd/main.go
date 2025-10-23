@@ -5,10 +5,10 @@ import tensor "github.com/NoahSchiro/minigrad/pkg/tensor"
 
 func main() {
 
-	a := tensor.New([]float32{1}, []int{1})
-	b := a.ElemAdd(1)
-	c := b.ElemAdd(1)
-	d := c.ElemAdd(1)
+	a := tensor.New([]float32{2}, []int{1})
+	b := a.ElemMul(2)
+	c := b.Neg()
+	d := c.ElemMul(4)
 
 	fmt.Println("a =", a.Print())
 	fmt.Println("b =", b.Print())
@@ -20,5 +20,4 @@ func main() {
 	fmt.Println("a =", a.Print())
 	fmt.Println("b =", b.Print())
 	fmt.Println("c =", c.Print())
-	fmt.Println("d =", d.Print())
 }
