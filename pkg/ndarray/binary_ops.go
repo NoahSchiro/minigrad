@@ -17,6 +17,21 @@ func (a NdArray) Add(b NdArray) NdArray {
 	return result
 }
 
+// Element wise matrix multiplication
+func (a NdArray) ElemMul(b NdArray) NdArray {
+
+	if !checkShape(a, b) {
+		panic("NdArray ElemAdd error: shapes must match")
+	}
+
+	result := a.Clone()
+
+	for i := range b.data {
+		result.data[i] *= b.data[i]
+	}
+	return result
+}
+
 // Matrix multiplication
 func (a NdArray) MatMul(b NdArray) NdArray {
 	// Validate minimum dimensions
