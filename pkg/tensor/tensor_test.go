@@ -1,6 +1,5 @@
 package tensor;
 
-import "fmt"
 import "testing"
 
 //----------- Begin Init functions -----------
@@ -15,7 +14,7 @@ func TestTensorNew(t *testing.T) {
 
 	elem, err := a.data.Get([]int{0})
 	if err != nil {
-		fmt.Println("Error in fetching first elem of tensor")
+		t.Errorf("Error in fetching first elem of tensor")
 	}
 	if elem != 1 { t.Errorf("Fetching data from Tensor NdArray was wrong") }
 
@@ -34,13 +33,13 @@ func TestTensorNew(t *testing.T) {
 
 	elem, err = a.data.Get([]int{1,0})
 	if err != nil {
-		fmt.Println("Error in fetching (1,0) elem of tensor")
+		t.Errorf("Error in fetching (1,0) elem of tensor")
 	}
 	if elem != 0 { t.Errorf("Fetching data from Tensor NdArray was wrong") }
 	
 	elem, err = a.data.Get([]int{1,1})
 	if err != nil {
-		fmt.Println("Error in fetching (1,1) elem of tensor")
+		t.Errorf("Error in fetching (1,1) elem of tensor")
 	}
 	if elem != 1 { t.Errorf("Fetching data from Tensor NdArray was wrong") }
 }
@@ -93,16 +92,16 @@ func TestBuildTopo(t *testing.T) {
 	topo := buildTopo(&d)
 
 	if topo[0] != &a {
-		fmt.Println("Topological ordering is wrong")
+		t.Errorf("Topological ordering is wrong")
 	}
 	if topo[1] != &b {
-		fmt.Println("Topological ordering is wrong")
+		t.Errorf("Topological ordering is wrong")
 	}
 	if topo[2] != &c {
-		fmt.Println("Topological ordering is wrong")
+		t.Errorf("Topological ordering is wrong")
 	}
 	if topo[3] != &d {
-		fmt.Println("Topological ordering is wrong")
+		t.Errorf("Topological ordering is wrong")
 	}
 }
 //----------- End backwards functions -----------
@@ -116,27 +115,27 @@ func TestScalarAdd(t *testing.T) {
 
 	elem, _ := b.data.Get([]int{0})
 	if elem != 3 {
-		fmt.Println("ScalarAdd did not add correctly")
+		t.Errorf("ScalarAdd did not add correctly")
 	}
 	elem, _ = b.data.Get([]int{1})
-	if elem != 5 {
-		fmt.Println("ScalarAdd did not add correctly")
+	if elem != 4 {
+		t.Errorf("ScalarAdd did not add correctly")
 	}
 	elem, _ = b.grad.Get([]int{0})
 	if elem != 1 {
-		fmt.Println("ScalarAdd gradient incorrect")
+		t.Errorf("ScalarAdd gradient incorrect")
 	}
 	elem, _ = b.grad.Get([]int{1})
 	if elem != 1 {
-		fmt.Println("ScalarAdd gradient incorrect")
+		t.Errorf("ScalarAdd gradient incorrect")
 	}
 	elem, _ = a.grad.Get([]int{0})
 	if elem != 1 {
-		fmt.Println("ScalarAdd gradient incorrect")
+		t.Errorf("ScalarAdd gradient incorrect")
 	}
 	elem, _ = a.grad.Get([]int{1})
 	if elem != 1 {
-		fmt.Println("ScalarAdd gradient incorrect")
+		t.Errorf("ScalarAdd gradient incorrect")
 	}
 }
 
@@ -148,27 +147,27 @@ func TestScalarMul(t *testing.T) {
 
 	elem, _ := b.data.Get([]int{0})
 	if elem != 2 {
-		fmt.Println("ScalarAdd did not add correctly")
+		t.Errorf("ScalarAdd did not add correctly")
 	}
 	elem, _ = b.data.Get([]int{1})
 	if elem != 4 {
-		fmt.Println("ScalarAdd did not add correctly")
+		t.Errorf("ScalarAdd did not add correctly")
 	}
 	elem, _ = b.grad.Get([]int{0})
 	if elem != 1 {
-		fmt.Println("ScalarAdd gradient incorrect")
+		t.Errorf("ScalarAdd gradient incorrect")
 	}
 	elem, _ = b.grad.Get([]int{1})
 	if elem != 1 {
-		fmt.Println("ScalarAdd gradient incorrect")
+		t.Errorf("ScalarAdd gradient incorrect")
 	}
 	elem, _ = a.grad.Get([]int{0})
 	if elem != 2 {
-		fmt.Println("ScalarAdd gradient incorrect")
+		t.Errorf("ScalarAdd gradient incorrect")
 	}
 	elem, _ = a.grad.Get([]int{1})
-	if elem != 1 {
-		fmt.Println("ScalarAdd gradient incorrect")
+	if elem != 2 {
+		t.Errorf("ScalarAdd gradient incorrect")
 	}
 }
 
@@ -180,27 +179,27 @@ func TestNeg(t *testing.T) {
 
 	elem, _ := b.data.Get([]int{0})
 	if elem != -1 {
-		fmt.Println("ScalarAdd did not add correctly")
+		t.Errorf("ScalarAdd did not add correctly")
 	}
 	elem, _ = b.data.Get([]int{1})
 	if elem != -2 {
-		fmt.Println("ScalarAdd did not add correctly")
+		t.Errorf("ScalarAdd did not add correctly")
 	}
 	elem, _ = b.grad.Get([]int{0})
 	if elem != 1 {
-		fmt.Println("ScalarAdd gradient incorrect")
+		t.Errorf("ScalarAdd gradient incorrect")
 	}
 	elem, _ = b.grad.Get([]int{1})
 	if elem != 1 {
-		fmt.Println("ScalarAdd gradient incorrect")
+		t.Errorf("ScalarAdd gradient incorrect")
 	}
 	elem, _ = a.grad.Get([]int{0})
 	if elem != -1 {
-		fmt.Println("ScalarAdd gradient incorrect")
+		t.Errorf("ScalarAdd gradient incorrect")
 	}
 	elem, _ = a.grad.Get([]int{1})
 	if elem != -1 {
-		fmt.Println("ScalarAdd gradient incorrect")
+		t.Errorf("ScalarAdd gradient incorrect")
 	}
 }
 //----------- End unary functions -----------
@@ -219,25 +218,45 @@ func TestAdd(t *testing.T) {
 
 	elem, _ := c.data.Get([]int{0,0})
 	if elem != -3 {
-		fmt.Println("Add did not add correctly")
+		t.Errorf("Add did not add correctly")
 	}
 	elem, _ = c.data.Get([]int{1,0})
 	if elem != 1 {
-		fmt.Println("Add did not add correctly")
+		t.Errorf("Add did not add correctly")
 	}
 
 	elem, _ = c.grad.Get([]int{1,1})
 	if elem != 1 {
-		fmt.Println("Add gradient incorrect")
+		t.Errorf("Add gradient incorrect")
 	}
 	elem, _ = b.grad.Get([]int{1,0})
 	if elem != 1 {
-		fmt.Println("Add gradient incorrect")
+		t.Errorf("Add gradient incorrect")
 	}
 	elem, _ = a.grad.Get([]int{0,1})
 	if elem != 1 {
-		fmt.Println("Add gradient incorrect")
+		t.Errorf("Add gradient incorrect")
+	}
+}
+
+func TestMatMul(t *testing.T) {
+
+	a := New([]float32{1,2,3}, []int{1,3})
+	b := New([]float32{3,3,3}, []int{3,1})
+	c := a.MatMul(&b)
+	c.Backward()
+	
+	elem, _ := c.data.Get([]int{0,0})
+	if elem != 18 {
+		t.Errorf("MatMul incorrect")
+	}
+	elem, _ = a.grad.Get([]int{0,2})
+	if elem != 3 {
+		t.Errorf("Gradient isn't right for tensor A")
+	}
+	elem, _ = b.grad.Get([]int{1,0})
+	if elem != 2 {
+		t.Errorf("Gradient isn't right for tensor B")
 	}
 }
 //----------- End binary functions -----------
-

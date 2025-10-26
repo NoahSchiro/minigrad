@@ -36,14 +36,14 @@ func (a NdArray) ElemMul(b NdArray) NdArray {
 func (a NdArray) MatMul(b NdArray) NdArray {
 	// Validate minimum dimensions
 	if a.ndim < 2 || b.ndim < 2 {
-		panic("MatMul: Inputs must have at least 2 dimensions")
+		panic("NdArray MatMul: Inputs must have at least 2 dimensions")
 	}
 
 	// Get matrix dimensions
 	aCols := a.shape[a.ndim-1]
 	bRows := b.shape[b.ndim-2]
 	if aCols != bRows {
-		panic("MatMul: Incompatible inner dimensions")
+		panic("NdArray MatMul: Incompatible inner dimensions")
 	}
 
 	// Validate leading dimensions (must be equal)
@@ -51,11 +51,11 @@ func (a NdArray) MatMul(b NdArray) NdArray {
 	bLeading := b.shape[:b.ndim-2]
 
 	if len(aLeading) != len(bLeading) {
-		panic("MatMul mismatched leading dimensions")
+		panic("NdArray MatMul mismatched leading dimensions")
 	}
 	for i := range aLeading {
 		if aLeading[i] != bLeading[i] {
-			panic("MatMul mismatched leading dimensions")
+			panic("NdArray MatMul mismatched leading dimensions")
 		}
 	}
 

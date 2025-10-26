@@ -101,7 +101,54 @@ func TestNdArrayFill(t *testing.T) {
 	}
 }
 //----------- End Init functions -----------
+//----------- Begin Shape functions -----------
+func TestNdArrayTranspose(t *testing.T) {
+	a := New([]float32{1,2,3,4}, []int{2,2})
 
+	b := a.T()
+
+	if b.data[0] != 1 {
+		t.Errorf("Transpose didn't work on matrix")
+	}
+	if b.data[1] != 3 {
+		t.Errorf("Transpose didn't work on matrix")
+	}
+	if b.data[2] != 2 {
+		t.Errorf("Transpose didn't work on matrix")
+	}
+	if b.data[3] != 4 {
+		t.Errorf("Transpose didn't work on matrix")
+	}
+
+	x := New(
+		[]float32{
+			1, 2, 3,
+			4, 5, 6,
+
+			7, 8, 9,
+			10,11,12,
+
+			13,14,15,
+			16,17,18,
+		},
+		[]int{3, 2, 3},
+	)
+
+	y := x.T()
+	elem, _ := y.Get([]int{0,2,1})
+	if elem != 6 {
+		t.Errorf("Transpose didn't work on tensor")
+	}
+	elem, _ = y.Get([]int{1,1,1})
+	if elem != 11 {
+		t.Errorf("Transpose didn't work on tensor")
+	}
+	elem, _ = y.Get([]int{2,0,1})
+	if elem != 16 {
+		t.Errorf("Transpose didn't work on tensor")
+	}
+}
+//----------- End Shape functions -----------
 //----------- Begin getter functions -----------
 func TestGetters(t *testing.T) {
 
@@ -192,7 +239,6 @@ func TestCheckShape(t *testing.T) {
 		t.Errorf("checkShape returned true when it should be false")
 	}
 }
-//intArrayProduct(data []int)
 
 func TestIntArrayProduct(t *testing.T) {
 	a := intArrayProduct([]int {1,2,3,4,5})

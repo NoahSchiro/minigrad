@@ -119,6 +119,63 @@ func (a NdArray) Get(idxs []int) (float32, error) {
 	return a.data[index], nil 
 }
 
+// Transpose
+func (a NdArray) T() NdArray {
+	if a.ndim < 2 {
+		panic("NdArray.T: requires at least 2 dimensions")
+	}
+
+	// If NdArray is a matrix,
+	// do a direct transpose
+	if a.ndim == 2 {
+		rows, cols := a.shape[0], a.shape[1]
+		out := make([]float32, a.size)
+
+		for i := 0; i < rows; i++ {
+			for j := 0; j < cols; j++ {
+				out[j*rows+i] = a.data[i*cols+j]
+			}
+		}
+
+		return NdArray{
+			data:  out,
+			shape: []int{cols, rows},
+			size:  a.size,
+			ndim:  2,
+		}
+	}
+
+	// Ndim > 2 -> iterate over submatrices
+	batch := 1
+	for i := 0; i < a.ndim-2; i++ {
+		batch *= a.shape[i]
+	}
+	rows := a.shape[a.ndim-2]
+	cols := a.shape[a.ndim-1]
+
+	out := make([]float32, a.size)
+	submatSize := rows * cols
+
+	for b := 0; b < batch; b++ {
+		offset := b * submatSize
+		for i := 0; i < rows; i++ {
+			for j := 0; j < cols; j++ {
+				out[offset+j*rows+i] = a.data[offset+i*cols+j]
+			}
+		}
+	}
+
+	newShape := append([]int{}, a.shape...)
+	newShape[a.ndim-2], newShape[a.ndim-1] = newShape[a.ndim-1], newShape[a.ndim-2]
+
+	return NdArray{
+		data:  out,
+		shape: newShape,
+		size:  a.size,
+		ndim:  a.ndim,
+	}
+}
+
 func (a *NdArray) Fill(value float32) {
 	for i := 0; i < a.size; i++ {
 		a.data[i] = value;
