@@ -139,6 +139,49 @@ func TestScalarAdd(t *testing.T) {
 	}
 }
 
+// Test the add with the broadcast function
+func TestBroadcastAdd(t *testing.T) {
+	a := New([]float32{
+		1, 2,
+		3, 4,
+	}, []int{2, 2})
+	b := New([]float32{10, 20}, []int{2})
+
+	c := a.Add(&b)
+	c.Backward()
+
+	// Check forward
+	expected := []float32{
+		11, 22,
+		13, 24,
+	}
+	for i, v := range expected {
+		elem, _ := c.data.Get([]int{i / 2, i % 2})
+		if elem != v {
+			t.Errorf("BroadcastAdd failed at %d: got %v, want %v", i, elem, v)
+		}
+	}
+
+	// Gradients for a should all be 1
+	for i := 0; i < 2; i++ {
+		for j := 0; j < 2; j++ {
+			aGrad, _ := a.grad.Get([]int{i, j})
+			if aGrad != 1 {
+				t.Errorf("BroadcastAdd a.grad incorrect at %d,%d: got %v", i, j, aGrad)
+			}
+		}
+	}
+
+	// Gradients for b should be summed over rows
+	expectedBGrad := []float32{2, 2}
+	for j, v := range expectedBGrad {
+		bGrad, _ := b.grad.Get([]int{j})
+		if bGrad != v {
+			t.Errorf("BroadcastAdd b.grad incorrect at %d: got %v, want %v", j, bGrad, v)
+		}
+	}
+}
+
 func TestScalarMul(t *testing.T) {
 	a := New([]float32{1,2}, []int{2})
 	b := a.ScalarMul(2)
