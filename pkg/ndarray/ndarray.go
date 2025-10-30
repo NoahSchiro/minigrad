@@ -119,6 +119,31 @@ func (a NdArray) Get(idxs []int) (float32, error) {
 	return a.data[index], nil 
 }
 
+func (a NdArray) Set(idxs []int, value float32) {
+	if len(idxs) != a.ndim {
+		fmt.Errorf("number of indices %d does not match array dimensions %d", len(idxs), len(a.shape))
+		return
+	}
+
+	index := 0
+	stride := 1
+	for i := a.ndim - 1; i >= 0; i-- {
+		if idxs[i] < 0 || idxs[i] >= a.shape[i] {
+			fmt.Errorf("index out of bounds: dimension %d, index %d out of range [0, %d]", i, idxs[i], a.shape[i])
+			return
+		}
+		index += idxs[i] * stride
+		stride *= a.shape[i];
+	}
+
+	if index >= a.size {
+		fmt.Errorf("calculated flat index %d is out of bounds for data slice of length %d", index, a.size)
+		return
+	}
+
+	a.data[index] = value
+}
+
 // Transpose
 func (a NdArray) T() NdArray {
 	if a.ndim < 2 {
