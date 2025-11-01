@@ -1,8 +1,14 @@
 package main
 
 import "fmt"
-import tensor "github.com/NoahSchiro/minigrad/pkg/tensor"
+import t "github.com/NoahSchiro/minigrad/pkg/tensor"
 import nn "github.com/NoahSchiro/minigrad/pkg/nn"
+
+func printLinearLayers(layers []*t.Tensor) {
+	for i := range layers {
+		fmt.Println(layers[i].Print())
+	}
+}
 
 func main() {
 
@@ -10,26 +16,28 @@ func main() {
 	inDim     := 2
 	outDim    := 3
 
-	input := tensor.Rand([]int{batchSize, inDim})
+	input := t.Rand([]int{batchSize, inDim})
 	
 	model := nn.LinearNew(inDim, outDim)
 	params := model.Parameters()
+	optim := nn.SGDNew(params, 0.1)
 
 	output := model.Forward(&input)
+	fmt.Println("Before backwards")
+	printLinearLayers(params)
+
 	output.Backward()
+	
+	fmt.Println("After backwards")
+	printLinearLayers(params)
 
-	fmt.Println(input.Print())
-	for i := range params {
-		fmt.Println(params[i].Print())
-	}
-	fmt.Println(output.Print())
+	optim.Update()
+	
+	fmt.Println("After update")
+	printLinearLayers(params)
 
-	// w := tensor.Rand([]int{inDim, outDim})
-	// b := tensor.Rand([]int{outDim})
-	//
-	// w_out := input.MatMul(&w)
-	// b_out := w_out.Add(&b)
-	// b_out.Backward()
-	//
-	// fmt.Println(input.Print())
+	optim.ZeroGrad()
+	
+	fmt.Println("After zeroing")
+	printLinearLayers(params)
 }

@@ -118,6 +118,12 @@ func (a NdArray) Get(idxs []int) (float32, error) {
 	}
 	return a.data[index], nil 
 }
+func (a NdArray) GetLinear(idx int) (float32) {
+	if idx >= a.size {
+		panic(fmt.Sprintf("NdArray GetLinear: Index %d is greater than size %d", idx, a.size))
+	}
+	return a.data[idx]
+}
 
 func (a NdArray) Set(idxs []int, value float32) {
 	if len(idxs) != a.ndim {
@@ -142,6 +148,12 @@ func (a NdArray) Set(idxs []int, value float32) {
 	}
 
 	a.data[index] = value
+}
+func (a NdArray) SetLinear(idx int, value float32) {
+	if idx >= a.size {
+		panic(fmt.Sprintf("NdArray SetLinear: Index %d is greater than size %d", idx, a.size))
+	}
+	a.data[idx] = value
 }
 
 // Transpose

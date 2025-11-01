@@ -80,6 +80,24 @@ func (a Tensor) Print() string {
 }
 
 // Getters
+func (a *Tensor) GetLinear(idx int) float32 {
+	if idx >= a.data.Size() {
+		panic(fmt.Sprintf("Tensor GetLinearGrad: Index %d is greater than size %d", idx, a.data.Size()))
+	}
+	return a.data.GetLinear(idx)
+}
+
+func (a *Tensor) SetLinear(idx int, value float32) {
+	a.data.SetLinear(idx, value)
+}
+
+func (a *Tensor) GetLinearGrad(idx int) float32 {
+	if idx >= a.grad.Size() {
+		panic(fmt.Sprintf("Tensor GetLinearGrad: Index %d is greater than size %d", idx, a.grad.Size()))
+	}
+	return a.grad.GetLinear(idx)
+}
+
 func (a Tensor) Shape() []int {
 	return a.data.Shape();
 }
@@ -90,6 +108,10 @@ func (a Tensor) Size() int {
 
 func (a Tensor) Ndim() int {
 	return a.data.Ndim();
+}
+
+func (a *Tensor) ZeroGrad() {
+	a.grad = nd.Zero(a.Shape())
 }
 
 // Given an arbitrary tensor, build a topological ordering of it's computation graph
