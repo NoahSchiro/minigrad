@@ -2,23 +2,19 @@ package main
 
 import "fmt"
 import tensor "github.com/NoahSchiro/minigrad/pkg/tensor"
+import nn "github.com/NoahSchiro/minigrad/pkg/nn"
 
 func main() {
 
-	a := tensor.New([]float32{1,2}, []int{2})
-	b := a.ScalarAdd(2)
-	c := b.Neg()
-	d := c.ScalarMul(4)
+	batchSize := 1
+	inDim     := 8
+	outDim    := 5
 
-	fmt.Println("a =", a.Print())
-	fmt.Println("b =", b.Print())
-	fmt.Println("c =", c.Print())
-	fmt.Println("d =", d.Print())
+	input := tensor.Rand([]int{batchSize, inDim})
+	fmt.Println(input.Shape())
 
-	d.Backward()
+	model := nn.LinearNew(inDim, outDim)
 
-	fmt.Println("a =", a.Print())
-	fmt.Println("b =", b.Print())
-	fmt.Println("c =", c.Print())
-	fmt.Println("d =", d.Print())
+	output := model.Forward(input)
+	fmt.Println(output.Shape())
 }
