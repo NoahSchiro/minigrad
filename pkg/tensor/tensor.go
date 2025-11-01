@@ -1,5 +1,6 @@
 package tensor
 
+import "fmt"
 import nd "github.com/NoahSchiro/minigrad/pkg/ndarray"
 
 type Tensor struct {
@@ -72,6 +73,8 @@ func (a Tensor) Print() string {
 	s += a.data.Print()
 	s += "\n  grad = "
 	s += a.grad.Print()
+	s += fmt.Sprintf("\n  p1 = %p", a.p1)
+	s += fmt.Sprintf("\n  p2 = %p", a.p2)
 	s += "\n)"
 	return s
 }
