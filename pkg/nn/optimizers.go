@@ -25,7 +25,7 @@ func (a *SGD) Update() {
 		t := a.params[i]
 		
 		for j := range t.Size() {
-			new_value := (t.GetLinearGrad(j) * a.lr) + t.GetLinear(j)
+			new_value := t.GetLinear(j) - (t.GetLinearGrad(j) * a.lr)
 			t.SetLinear(j, new_value)
 		}
 	}

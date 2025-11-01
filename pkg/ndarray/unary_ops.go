@@ -1,5 +1,7 @@
 package ndarray
 
+import "math"
+
 func (a NdArray) UnaryApply(f func(float32) float32) NdArray {
 
 	// Create a copy
@@ -43,3 +45,21 @@ func (a NdArray) ReLu() NdArray {
 	})
 }
 
+func (a NdArray) Sum() NdArray {
+	var total float32 = 0.0
+	for _, v := range a.data {
+		total += v
+	}
+	return NdArray{
+		data: []float32{total},
+		shape: []int{1},
+		size: 1,
+		ndim: 1,
+	}
+}
+
+func (a NdArray) Abs() NdArray {
+	return a.UnaryApply(func(x float32) float32 {
+		return float32(math.Abs(float64(x)))
+	})
+}

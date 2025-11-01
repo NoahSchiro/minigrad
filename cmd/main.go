@@ -16,28 +16,20 @@ func main() {
 	inDim     := 2
 	outDim    := 3
 
-	input := t.Rand([]int{batchSize, inDim})
+	x := t.Rand([]int{batchSize, inDim})
+	y := t.NewFill(3, []int{1, 3})
 	
 	model := nn.LinearNew(inDim, outDim)
 	params := model.Parameters()
 	optim := nn.SGDNew(params, 0.1)
 
-	output := model.Forward(&input)
-	fmt.Println("Before backwards")
-	printLinearLayers(params)
+	for range 100 {
+		y_pred := model.Forward(&x)
+		loss := nn.AbsErr(&y_pred, &y)
+		loss.Backward()
+		optim.Update()
+		optim.ZeroGrad()
 
-	output.Backward()
-	
-	fmt.Println("After backwards")
-	printLinearLayers(params)
-
-	optim.Update()
-	
-	fmt.Println("After update")
-	printLinearLayers(params)
-
-	optim.ZeroGrad()
-	
-	fmt.Println("After zeroing")
-	printLinearLayers(params)
+		fmt.Println(loss.Print())
+	}
 }
