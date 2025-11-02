@@ -14,9 +14,10 @@ func LinearNew(inDim int, outDim int) *Linear {
 	}
 }
 
-func (a *Linear) Forward(input *t.Tensor) t.Tensor {
+func (a *Linear) Forward(input *t.Tensor) *t.Tensor {
 	w_out := input.MatMul(&a.weight)
-	return w_out.Add(&a.bias)
+	b_out := w_out.Add(&a.bias)
+	return &b_out
 }
 
 func (a *Linear) Parameters() []*t.Tensor {
