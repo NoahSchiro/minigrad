@@ -102,5 +102,27 @@ func (a *Tensor) Abs() *Tensor {
 	}
 }
 
+func (a *Tensor) Sigmoid() *Tensor {
+	d := a.data.Sigmoid()
+
+	backward := func(self *Tensor) {
+		// d/dx sigmoid(x) = sigmoid(x) * (1 - sigmoid(x))
+		for i := range a.data.Size() {
+			y := d.GetLinear(i)
+			grad := self.grad.GetLinear(i) * y * (1 - y)
+			x := a.grad.GetLinear(i) + grad
+			a.grad.SetLinear(i, x)
+		}
+	}
+
+	return &Tensor{
+		data: d,
+		grad: nd.Zero(a.Shape()),
+		b: backward,
+		p1: a,
+		p2: nil,
+	}
+}
+
 // func (a *Tensor) ReLu() Tensor {
 // }
