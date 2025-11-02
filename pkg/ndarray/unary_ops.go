@@ -63,3 +63,9 @@ func (a NdArray) Abs() NdArray {
 		return float32(math.Abs(float64(x)))
 	})
 }
+
+func (a NdArray) Sigmoid() NdArray {
+	return a.UnaryApply(func(x float32) float32 {
+		return 1 / (1 + float32(math.Exp(-float64(x))))
+	})
+}
