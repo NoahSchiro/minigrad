@@ -1,17 +1,46 @@
 # minigrad
-A minimal implementation of autograd and neural networks. Inspired by [micrograd](https://github.com/karpathy/micrograd) and [pytorch](https://github.com/pytorch/pytorch). This library is meant to be educational and not necessarily meant for production code.
+A minimal implementation of autograd and neural networks. Inspired by [micrograd](https://github.com/karpathy/micrograd) and [pytorch](https://github.com/pytorch/pytorch). This library is meant to be educational and not meant for production code.
 
-This software has two versions.
+## Install and dev work:
 
-v1.0 is an implementation in Python and treats floats as atomic values. It is designed to be minimal and clocks in under 500 lines of code.
+Install:
+`go get github.com/NoahSchiro/minigrad@latest`
 
-v2.0 is written in Go for some additional speed, a new challenge for me, and because Go is a simple language. This simplicity lends itself well to explaining the concepts of an autogradient engine. In this version, we will be treating matrices as the atomic value (as does most modern ML libraries) and we aim to come in under 1000 lines of code with more features than v1.0.
+Import in your code:
+```
+// You may only need one of these depending on your work
+import "github.com/NoahSchiro/minigrad/tensor"
+import "github.com/NoahSchiro/minigrad/ndarray"
+import "github.com/NoahSchiro/minigrad/nn"
+```
 
-## Features:
+### Dev work:
 
-- [ ] Autograd engine
-- [ ] Linear layers
-- [ ] RNN, LSTM
-- [ ] CNN
-- [ ] ReLU, SoftMax, Sigmoid
-- [ ] SGD and Adam optimizer
+Install:
+`git clone git@github.com:NoahSchiro/minigrad.git`
+
+Run tests: 
+`go test ./...`
+
+## Example:
+
+Currently, there is one example for the xor problem which can be found in `cmd/xor.go`
+
+## Features and roadmap:
+
+- [x] Autograd engine
+- [x] Linear layers
+- [ ] RNN, LSTM (targeting v2.1)
+- [ ] CNN (targeting v2.2)
+- [x] Sigmoid
+- [ ] ReLU, SoftMax (targeting v2.1)
+- [x] SGD optimizer
+- [ ] Adam optimizer (targeting v2.1)
+
+## SCC Report
+
+The goal is to keep the library under 1k lines of code. This excludes test files.
+
+| Language | Files | Lines | Blanks | Comments | Code |
+|----------|-------|-------|--------|----------|------|
+| Go | 12 | 1016 | 163 | 74 | 779 |
