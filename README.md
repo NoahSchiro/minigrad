@@ -1,54 +1,46 @@
 # minigrad
-A minimal implementation of neural networks in Python. Inspired by [micrograd](https://github.com/karpathy/micrograd) and [pytorch](https://github.com/pytorch/pytorch)
+A minimal implementation of autograd and neural networks. Inspired by [micrograd](https://github.com/karpathy/micrograd) and [pytorch](https://github.com/pytorch/pytorch). This library is meant to be educational and not meant for production code.
 
--------------
+## Install and dev work:
 
-Use:
-Similar to pytorch, this is really a tensor library with a thin neural networks wrapper built on top. The following shows tensor intialization and a few of the operations available
+Install:
+`go get github.com/NoahSchiro/minigrad@latest`
+
+Import in your code:
 ```
-from minigrad.tensor import tensor
-
-a = Tensor([[1, 2], [3, 4]])
-b = Tensor([[1, 2], [3, 4]])
-
-c = a+b
-d = a*b
-
-d_relu = d.relu() # Element-wise relu
-c_sig  = c.sigmoid() # Element-wise sigmoid
+// You may only need one of these depending on your work
+import "github.com/NoahSchiro/minigrad/tensor"
+import "github.com/NoahSchiro/minigrad/ndarray"
+import "github.com/NoahSchiro/minigrad/nn"
 ```
 
-Naturally, the most important aspect of a machine learning library is autogradient. Similar to the pytorch api, we can just call backward on any tensor to compute gradients
+### Dev work:
 
-```
-c_sig.backward()
-```
+Install:
+`git clone git@github.com:NoahSchiro/minigrad.git`
 
-Finally, if we wanted to actually step our tensor parameters in the direction that minimizes `c_sig`, then we just have to hand off the parameters to a stochastic gradient decent engine
+Run tests: 
+`go test ./...`
 
-```
-sgd = SGD([a, b], lr=0.01)
+## Example:
 
-# Once gradients are computed, just call step!
-sgd.step()
-```
+Currently, there is one example for the xor problem which can be found in `cmd/xor.go`
 
-To create your own neural networks, you need to extend off of nn.Module, again a very similar idea to pytorch. When you create your own module, there are three functions you need to define
-```
-from minigrad import nn
+## Features and roadmap:
 
-def MyNet(nn.Module):
-    def __init__(self):
-        # Stateful information goes here!
-        pass
+- [x] Autograd engine
+- [x] Linear layers
+- [ ] RNN, LSTM (targeting v2.1)
+- [ ] CNN (targeting v2.2)
+- [x] Sigmoid
+- [ ] ReLU, SoftMax (targeting v2.1)
+- [x] SGD optimizer
+- [ ] Adam optimizer (targeting v2.1)
 
-    def forward(self, x):
-        # What do we do when we want to pass an input through the network?
-        return tensor
+## SCC Report
 
-    def parameters():
-        # Here we return all stateful information as a list
-        return 
-```
+The goal is to keep the library under 1k lines of code. This excludes test files.
 
-There is much more functionality, but to learn more, check out the examples directory!
+| Language | Files | Lines | Blanks | Comments | Code |
+|----------|-------|-------|--------|----------|------|
+| Go | 12 | 1016 | 163 | 74 | 779 |
