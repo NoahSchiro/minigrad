@@ -1,6 +1,7 @@
 package tensor;
 
 import "testing"
+import "math"
 
 //----------- Begin Init functions -----------
 func TestTensorNew(t *testing.T) {
@@ -244,6 +245,101 @@ func TestNeg(t *testing.T) {
 	if elem != -1 {
 		t.Errorf("ScalarAdd gradient incorrect")
 	}
+}
+
+func TestSigmoid(t *testing.T) {
+    // Input tensor
+    a := New([]float32{-1, 0, 1}, []int{3})
+    b := a.Sigmoid()
+
+    // Run backward to compute gradients
+    b.Backward()
+
+    // ---- Forward checks ----
+    // Sigmoid(x) = 1 / (1 + e^(-x))
+    expected := []float32{
+        1 / (1 + float32(math.Exp(1))), // sigmoid(-1)
+        0.5,                            // sigmoid(0)
+        1 / (1 + float32(math.Exp(-1))), // sigmoid(1)
+    }
+
+    for i := range expected {
+        elem, _ := b.data.Get([]int{i})
+        if math.Abs(float64(elem-expected[i])) > 1e-5 {
+            t.Errorf("Sigmoid forward incorrect at index %d: got %v, want %v", i, elem, expected[i])
+        }
+    }
+
+    // ---- Gradient checks ----
+    // For sigmoid, dy/dx = sigmoid(x) * (1 - sigmoid(x))
+    for i := range expected {
+        s := expected[i]
+        expectedGrad := s * (1 - s)
+
+        elem, _ := a.grad.Get([]int{i})
+        if math.Abs(float64(elem-expectedGrad)) > 1e-5 {
+            t.Errorf("Sigmoid gradient incorrect at index %d: got %v, want %v", i, elem, expectedGrad)
+        }
+    }
+}
+
+func TestReLU(t *testing.T) {
+    // Input tensor with positive and negative values
+    a := New([]float32{-1, 0, 2}, []int{3})
+    b := a.ReLu()
+
+    // Run backward to compute gradients
+    b.Backward()
+
+    // ---- Forward checks ----
+    elem, _ := b.data.Get([]int{0})
+    if elem != 0 {
+        t.Errorf("ReLU forward incorrect at index 0: got %v, want %v", elem, 0)
+    }
+
+    elem, _ = b.data.Get([]int{1})
+    if elem != 0 {
+        t.Errorf("ReLU forward incorrect at index 1: got %v, want %v", elem, 0)
+    }
+
+    elem, _ = b.data.Get([]int{2})
+    if elem != 2 {
+        t.Errorf("ReLU forward incorrect at index 2: got %v, want %v", elem, 2)
+    }
+
+    // ---- Gradient checks ----
+    // b.grad should be 1 everywhere after backward (if Backward initializes it that way)
+    elem, _ = b.grad.Get([]int{0})
+    if elem != 1 {
+        t.Errorf("ReLU output gradient incorrect at index 0: got %v, want %v", elem, 1)
+    }
+
+    elem, _ = b.grad.Get([]int{1})
+    if elem != 1 {
+        t.Errorf("ReLU output gradient incorrect at index 1: got %v, want %v", elem, 1)
+    }
+
+    elem, _ = b.grad.Get([]int{2})
+    if elem != 1 {
+        t.Errorf("ReLU output gradient incorrect at index 2: got %v, want %v", elem, 1)
+    }
+
+    // ---- Input gradient checks (a.grad) ----
+    // d/dx relu(x) = 0 for x <= 0, 1 for x > 0
+    elem, _ = a.grad.Get([]int{0})
+    if elem != 0 {
+        t.Errorf("ReLU input gradient incorrect at index 0: got %v, want %v", elem, 0)
+    }
+
+    elem, _ = a.grad.Get([]int{1})
+    if elem != 0 {
+        t.Errorf("ReLU input gradient incorrect at index 1: got %v, want %v", elem, 0)
+    }
+
+    elem, _ = a.grad.Get([]int{2})
+    if elem != 1 {
+        t.Errorf("ReLU input gradient incorrect at index 2: got %v, want %v", elem, 1)
+    }
 }
 //----------- End unary functions -----------
 //----------- Begin binary functions -----------

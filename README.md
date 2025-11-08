@@ -33,7 +33,8 @@ Currently, there is one example for the xor problem which can be found in `cmd/x
 - [ ] RNN, LSTM (targeting v2.1)
 - [ ] CNN (targeting v2.2)
 - [x] Sigmoid
-- [ ] ReLU, SoftMax (targeting v2.1)
+- [x] ReLU
+- [ ] SoftMax (targeting v2.1)
 - [x] SGD optimizer
 - [ ] Adam optimizer (targeting v2.1)
 
