@@ -124,5 +124,30 @@ func (a *Tensor) Sigmoid() *Tensor {
 	}
 }
 
-// func (a *Tensor) ReLu() Tensor {
-// }
+func (a *Tensor) ReLu() *Tensor {
+	d := a.data.ReLu()
+
+	backward := func(self *Tensor) {
+		// d/dx relu(x) =  1 if x >= 0
+		// d/dx relu(x) =  0 if x <  0
+		for i := range a.data.Size() {
+			y := a.GetLinear(i)
+			var grad float32 = 0
+			if y > 0 {
+				grad = self.grad.GetLinear(i)
+			} else {
+				grad = 0
+			}
+			x := a.grad.GetLinear(i) + grad
+			a.grad.SetLinear(i, x)
+		}
+	}
+
+	return &Tensor{
+		data: d,
+		grad: nd.Zero(a.Shape()),
+		b: backward,
+		p1: a,
+		p2: nil,
+	}
+}
