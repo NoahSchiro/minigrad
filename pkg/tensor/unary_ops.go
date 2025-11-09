@@ -57,15 +57,15 @@ func (a *Tensor) Neg() *Tensor {
 	}
 }
 
-func (t *Tensor) Sum() *Tensor {
+func (a *Tensor) Sum() *Tensor {
 	// Compute forward pass
-	sumData := t.data.Sum()
+	sumData := a.data.Sum()
 
 	// Define backward function
 	backward := func(self *Tensor) {
-		for i := range t.grad.Size() {
-			x := t.grad.GetLinear(i) + self.grad.GetLinear(0)
-			t.grad.SetLinear(i, x)
+		for i := range a.grad.Size() {
+			x := a.grad.GetLinear(i) + self.grad.GetLinear(0)
+			a.grad.SetLinear(i, x)
 		}
 	}
 
@@ -73,7 +73,7 @@ func (t *Tensor) Sum() *Tensor {
 		data: sumData,
 		grad: nd.Zero([]int{1}),
 		b:    backward,
-		p1:   t,
+		p1:   a,
 		p2:   nil,
 	}
 }
@@ -87,6 +87,8 @@ func (a *Tensor) Abs() *Tensor {
 			var sign float32 = 1.0
 			if a.data.GetLinear(i) < 0 {
 				sign = -1.0
+			} else if a.data.GetLinear(i) == 0. {
+				sign = 0.
 			}
 			x := a.grad.GetLinear(i) + self.grad.GetLinear(i) * sign
 			a.grad.SetLinear(i, x)
