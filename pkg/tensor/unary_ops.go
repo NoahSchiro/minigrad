@@ -38,6 +38,49 @@ func (a *Tensor) ScalarMul(input float32) *Tensor {
 	}
 }
 
+func (a *Tensor) ScalarDiv(input float32) *Tensor {
+
+	// Define the backward function
+	backward := func(self *Tensor) {
+		// dL/da = (dL/dself) / input
+		a.grad = a.grad.Add(
+			self.grad.ScalarDiv(input),
+		)
+	}
+
+	return &Tensor{
+		data: a.data.ScalarDiv(input),
+		grad: nd.Zero(a.Shape()),
+		b: backward,
+		p1: a,
+		p2: nil,
+	}
+}
+
+
+
+func (a *Tensor) ScalarPow(pow float32) *Tensor {
+	
+	// Define the backward function
+	backward := func(self *Tensor) {
+		// dL/da = dL/dself * power * a^(power-1)
+		gradTerm := a.data.ScalarPow(pow - 1).ScalarMul(pow)
+		
+		for i := range a.grad.Size() {
+			x := a.grad.GetLinear(i) + self.grad.GetLinear(i) * gradTerm.GetLinear(i)
+			a.grad.SetLinear(i, x)
+		}
+	}
+
+	return &Tensor{
+		data: a.data.ScalarPow(pow),
+		grad: nd.Zero(a.Shape()),
+		b: backward,
+		p1: a,
+		p2: nil,
+	}
+}
+
 func (a *Tensor) Neg() *Tensor {
 	
 	// Define the backward function

@@ -1,11 +1,19 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"math"
+	"time"
+)
 import t "github.com/NoahSchiro/minigrad/pkg/tensor"
 import nn "github.com/NoahSchiro/minigrad/pkg/nn"
 
 const LR float32 = 0.01
-const EPOCHS int = 15000
+const EPOCHS int = 5000 
+const TRIALS int = 100
+
+//sgd: 14000 epochs, 180.79 ms per trial, 100 trials
+//adam: 5000 epochs,  75.11 ms per trial, 100 trials
 
 type Model struct {
 	l1 *nn.Linear
@@ -29,7 +37,7 @@ func (a *Model) Parameters() []*t.Tensor {
 	return concat
 }
 
-func main() {
+func train() *t.Tensor {
 
 	// Define data for the xor problem
 	x := t.New(
@@ -53,18 +61,51 @@ func main() {
 
 	// Model and optimizer
 	model := ModelNew()
-	optim := nn.SGDNew(model.Parameters(), LR)
+	//optim := nn.SGDNew(model.Parameters(), LR)
+	optim := nn.AdamNew(
+		model.Parameters(),
+		LR,
+		0.9, 0.999, 1e-8,
+	)
 
 	// Train
 	for range EPOCHS {
 		out := model.Forward(&x)
-		loss := nn.AbsErr(out, &y)
+		//loss := nn.AbsErr(out, &y)
+		loss := nn.MSE(out, &y)
 		loss.Backward()
 		optim.Update()
 		optim.ZeroGrad()
 	}
 
 	// Test
-	out := model.Forward(&x)
-	fmt.Println(out.Print())
+	return model.Forward(&x)
+}
+
+func main() {
+
+	fails := 0
+
+	start := time.Now()
+	for range TRIALS {
+		out := train()
+		y_pred0 := math.Round(float64(out.GetLinear(0)))
+		y_pred1 := math.Round(float64(out.GetLinear(1)))
+		y_pred2 := math.Round(float64(out.GetLinear(2)))
+		y_pred3 := math.Round(float64(out.GetLinear(3)))
+
+		if y_pred0 != 0 || y_pred1 != 1 || y_pred2 != 1 || y_pred3 != 0 {
+			fails += 1
+		}
+	}
+	duration := time.Since(start)
+
+	fail_rate := float64(fails) / float64(TRIALS)
+
+	fmt.Println("Fail rate", fail_rate)
+	if fail_rate > 0.1 {
+		fmt.Println("Failed to converge 90% of the time")
+	} else {
+		fmt.Printf("Duration was %f ms per trial\n", float64(duration.Milliseconds()) / float64(TRIALS))
+	}
 }

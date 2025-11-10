@@ -21,10 +21,29 @@ func (a NdArray) ScalarAdd(input float32) NdArray {
 	})
 }
 
-// Add the input to each element
+// Mul the input to each element
 func (a NdArray) ScalarMul(input float32) NdArray {
 	return a.UnaryApply(func(x float32) float32 {
 		return x*input
+	})
+}
+
+// Div the input to each element
+func (a NdArray) ScalarDiv(input float32) NdArray {
+	if input == 0. {
+		panic("Div by zero not allowed!")
+	}
+	
+	return a.UnaryApply(func(x float32) float32 {
+		return x/input
+	})
+}
+
+func (a NdArray) ScalarPow(pow float32) NdArray {
+	return a.UnaryApply(func(x float32) float32 {
+		base := float64(x)
+		powF64 := float64(pow)
+		return float32(math.Pow(base, powF64))
 	})
 }
 
