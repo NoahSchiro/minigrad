@@ -1,5 +1,10 @@
 package nn
 
+import (
+	"math"
+	"math/rand"
+	"time"
+)
 import t "github.com/NoahSchiro/minigrad/pkg/tensor"
 
 type Linear struct {
@@ -8,9 +13,16 @@ type Linear struct {
 }
 
 func LinearNew(inDim int, outDim int) *Linear {
+	rand.Seed(time.Now().UnixNano())
+
+	// Xavier initialization with zero bias
+	limit := float32(math.Sqrt(6.0 / float64(inDim+outDim)))
+	w := t.Uniform([]int{inDim, outDim}, -limit, limit)
+	b := t.Zero([]int{outDim})
+
 	return &Linear{
-		weight: t.Rand([]int{inDim, outDim}),
-		bias: t.Rand([]int{outDim}),
+		weight: *w,
+		bias: *b,
 	}
 }
 

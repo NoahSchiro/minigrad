@@ -38,6 +38,49 @@ func (a *Tensor) ScalarMul(input float32) *Tensor {
 	}
 }
 
+func (a *Tensor) ScalarDiv(input float32) *Tensor {
+
+	// Define the backward function
+	backward := func(self *Tensor) {
+		// dL/da = (dL/dself) / input
+		a.grad = a.grad.Add(
+			self.grad.ScalarDiv(input),
+		)
+	}
+
+	return &Tensor{
+		data: a.data.ScalarDiv(input),
+		grad: nd.Zero(a.Shape()),
+		b: backward,
+		p1: a,
+		p2: nil,
+	}
+}
+
+
+
+func (a *Tensor) ScalarPow(pow float32) *Tensor {
+	
+	// Define the backward function
+	backward := func(self *Tensor) {
+		// dL/da = dL/dself * power * a^(power-1)
+		gradTerm := a.data.ScalarPow(pow - 1).ScalarMul(pow)
+		
+		for i := range a.grad.Size() {
+			x := a.grad.GetLinear(i) + self.grad.GetLinear(i) * gradTerm.GetLinear(i)
+			a.grad.SetLinear(i, x)
+		}
+	}
+
+	return &Tensor{
+		data: a.data.ScalarPow(pow),
+		grad: nd.Zero(a.Shape()),
+		b: backward,
+		p1: a,
+		p2: nil,
+	}
+}
+
 func (a *Tensor) Neg() *Tensor {
 	
 	// Define the backward function
@@ -57,15 +100,15 @@ func (a *Tensor) Neg() *Tensor {
 	}
 }
 
-func (t *Tensor) Sum() *Tensor {
+func (a *Tensor) Sum() *Tensor {
 	// Compute forward pass
-	sumData := t.data.Sum()
+	sumData := a.data.Sum()
 
 	// Define backward function
 	backward := func(self *Tensor) {
-		for i := range t.grad.Size() {
-			x := t.grad.GetLinear(i) + self.grad.GetLinear(0)
-			t.grad.SetLinear(i, x)
+		for i := range a.grad.Size() {
+			x := a.grad.GetLinear(i) + self.grad.GetLinear(0)
+			a.grad.SetLinear(i, x)
 		}
 	}
 
@@ -73,7 +116,7 @@ func (t *Tensor) Sum() *Tensor {
 		data: sumData,
 		grad: nd.Zero([]int{1}),
 		b:    backward,
-		p1:   t,
+		p1:   a,
 		p2:   nil,
 	}
 }
@@ -87,6 +130,8 @@ func (a *Tensor) Abs() *Tensor {
 			var sign float32 = 1.0
 			if a.data.GetLinear(i) < 0 {
 				sign = -1.0
+			} else if a.data.GetLinear(i) == 0. {
+				sign = 0.
 			}
 			x := a.grad.GetLinear(i) + self.grad.GetLinear(i) * sign
 			a.grad.SetLinear(i, x)

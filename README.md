@@ -36,7 +36,7 @@ Currently, there is one example for the xor problem which can be found in `cmd/x
 - [x] ReLU
 - [ ] SoftMax (targeting v2.1)
 - [x] SGD optimizer
-- [ ] Adam optimizer (targeting v2.1)
+- [x] Adam optimizer (targeting v2.1)
 
 ## SCC Report
 
