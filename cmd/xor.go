@@ -12,9 +12,6 @@ const LR float32 = 0.01
 const EPOCHS int = 5000 
 const TRIALS int = 100
 
-//sgd: 14000 epochs, 180.79 ms per trial, 100 trials
-//adam: 5000 epochs,  75.11 ms per trial, 100 trials
-
 type Model struct {
 	l1 *nn.Linear
 	l2 *nn.Linear
