@@ -45,8 +45,8 @@ func NewFill(data float32, shape []int) Tensor {
 }
 
 // Return a zeroed out tensor of specified shape
-func Zero(shape []int) Tensor {
-	return Tensor{
+func Zero(shape []int) *Tensor {
+	return &Tensor{
 		data: nd.Zero(shape),
 		grad: nd.Zero(shape),
 		b: func(s *Tensor) {},
@@ -56,9 +56,20 @@ func Zero(shape []int) Tensor {
 }
 
 // Given a shape, init a random Tensor with floats in range [0,1]
-func Rand(shape []int) Tensor {
-	return Tensor{
+func Rand(shape []int) *Tensor {
+	return &Tensor{
 		data: nd.Rand(shape),
+		grad: nd.Zero(shape),
+		b: func(s *Tensor) {},
+		p1: nil,
+		p2: nil,
+	}
+}
+
+// Given a shape, init a random Tensor with floats in range [0,1]
+func Uniform(shape []int, lower, upper float32) *Tensor {
+	return &Tensor{
+		data: nd.Uniform(shape, lower, upper),
 		grad: nd.Zero(shape),
 		b: func(s *Tensor) {},
 		p1: nil,

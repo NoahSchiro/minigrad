@@ -77,6 +77,26 @@ func Rand(shape []int) NdArray {
 	}
 }
 
+// Given a shape, init a random ndarray with floats in range [0,1]
+func Uniform(shape []int, lower, upper float32) NdArray {
+
+	// Compute how much space we need
+	prod := intArrayProduct(shape)
+	data := make([]float32, prod)
+
+	// Fill with uniform random number in range
+	for i := range data {
+		data[i] = lower + rand.Float32()*(upper-lower)
+	}
+
+	return NdArray{
+		data: data,
+		shape: shape,
+		size: prod,
+		ndim: len(shape),
+	}
+}
+
 func (a NdArray) Clone() NdArray {
 	new_data := make([]float32, a.size)
 	copy(new_data, a.data)
