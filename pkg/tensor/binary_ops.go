@@ -20,8 +20,8 @@ func (a *Tensor) Add(b *Tensor) Tensor {
 		outData = nd.Zero(aShape)
 		for i := 0; i < aShape[0]; i++ {
 			for j := 0; j < aShape[1]; j++ {
-				a_data, _ := a.data.Get([]int{i, j})
-				b_data, _ := b.data.Get([]int{j})
+				a_data := a.data.Get([]int{i, j})
+				b_data := b.data.Get([]int{j})
 				outData.Set([]int{i, j}, a_data + b_data) 
 			}
 		}
@@ -42,7 +42,7 @@ func (a *Tensor) Add(b *Tensor) Tensor {
 				var total float32
 				total = 0
 				for i := 0; i < aShape[0]; i++ {
-					value, _ := self.grad.Get([]int{i,j})
+					value := self.grad.Get([]int{i,j})
 					total += value
 				}
 				sumGrad.Set([]int{j}, total)

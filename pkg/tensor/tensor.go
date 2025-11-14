@@ -91,6 +91,14 @@ func (a Tensor) Print() string {
 }
 
 // Getters
+func (a *Tensor) Get(idxs []int) float32 {
+	return a.data.Get(idxs)
+}
+
+func (a *Tensor) GetGrad(idxs []int) float32 {
+	return a.grad.Get(idxs)
+}
+
 func (a *Tensor) GetLinear(idx int) float32 {
 	if idx >= a.data.Size() {
 		panic(fmt.Sprintf("Tensor GetLinearGrad: Index %d is greater than size %d", idx, a.data.Size()))

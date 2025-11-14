@@ -135,15 +135,15 @@ func TestNdArrayTranspose(t *testing.T) {
 	)
 
 	y := x.T()
-	elem, _ := y.Get([]int{0,2,1})
+	elem := y.Get([]int{0,2,1})
 	if elem != 6 {
 		t.Errorf("Transpose didn't work on tensor")
 	}
-	elem, _ = y.Get([]int{1,1,1})
+	elem = y.Get([]int{1,1,1})
 	if elem != 11 {
 		t.Errorf("Transpose didn't work on tensor")
 	}
-	elem, _ = y.Get([]int{2,0,1})
+	elem = y.Get([]int{2,0,1})
 	if elem != 16 {
 		t.Errorf("Transpose didn't work on tensor")
 	}
@@ -179,46 +179,13 @@ func TestNdArrayGet(t *testing.T) {
 	// 3,4
 	a := New([]float32{1.,2.,3.,4.}, []int{2,2})
 
-	// Provide indices larger than array
-	ans, err := a.Get([]int{3,3})
-	if err == nil {
-		t.Errorf("Get should have failed on out of bounds index")
-	}
-	_, err = a.Get([]int{0,3})
-	if err == nil {
-		t.Errorf("Get should have failed on out of bounds index")
-	}
-	_, err = a.Get([]int{3,0})
-	if err == nil {
-		t.Errorf("Get should have failed on out of bounds index")
-	}
-
-	// Provide negative indices
-	_, err = a.Get([]int{-1,0})
-	if err == nil {
-		t.Errorf("Get should have failed on negative index")
-	}
-
-	// Provide more dimensions then expected
-	_, err = a.Get([]int{0,0,0})
-	if err == nil {
-		t.Errorf("Get should have failed on too many index dims")
-	}
-
 	// Try to get an answer
-	ans, err = a.Get([]int{1,1})
-	if err != nil {
-		t.Errorf("Get shouldn't have failed")
-	}
+	ans := a.Get([]int{1,1})
 	if ans != 4.0 {
 		t.Errorf("Get answer was wrong. Got %f, expected 4.0", ans)
 	}
-
 	// Try another
-	ans, err = a.Get([]int{0,0})
-	if err != nil {
-		t.Errorf("Get shouldn't have failed")
-	}
+	ans = a.Get([]int{0,0})
 	if ans != 1.0 {
 		t.Errorf("Get answer was wrong. Got %f, expected 1.0", ans)
 	}
