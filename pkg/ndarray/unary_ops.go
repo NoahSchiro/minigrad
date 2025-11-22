@@ -64,6 +64,74 @@ func (a NdArray) ReLu() NdArray {
 	})
 }
 
+func (a NdArray) Sigmoid() NdArray {
+	return a.UnaryApply(func(x float32) float32 {
+		return 1 / (1 + float32(math.Exp(-float64(x))))
+	})
+}
+
+func (a NdArray) Softmax(axis int) NdArray {
+    if axis < 0 || axis >= a.ndim {
+        panic("Softmax: axis out of range")
+    }
+
+    out := NdArray{
+        data:  make([]float32, a.size),
+        shape: append([]int(nil), a.shape...),
+        size:  a.size,
+        ndim:  a.ndim,
+    }
+
+    // All combinations of indices except the axis
+    combos := AllIndexCombos(a.shape, axis)
+
+    // Full index buffer
+    idxs := make([]int, a.ndim)
+
+    // For each slice along dim=axis
+    for _, combo := range combos {
+        // Rebuild full index for the slice (axis left 0 for now)
+        ci := 0
+        for d := 0; d < a.ndim; d++ {
+            if d == axis {
+                idxs[d] = 0
+            } else {
+                idxs[d] = combo[ci]
+                ci++
+            }
+        }
+
+        // ---- 1. Find max ----
+        maxVal := float32(-1e30)
+        for i := 0; i < a.shape[axis]; i++ {
+            idxs[axis] = i
+            v := a.Get(idxs)
+            if v > maxVal {
+                maxVal = v
+            }
+        }
+
+        // ---- 2. Compute exp(x - max) and sum ----
+        sum := float32(0)
+        exps := make([]float32, a.shape[axis])
+
+        for i := 0; i < a.shape[axis]; i++ {
+            idxs[axis] = i
+            e := float32(math.Exp(float64(a.Get(idxs) - maxVal)))
+            exps[i] = e
+            sum += e
+        }
+
+        // ---- 3. Normalize ----
+        for i := 0; i < a.shape[axis]; i++ {
+            idxs[axis] = i
+            out.Set(idxs, exps[i]/sum)
+        }
+    }
+
+    return out
+}
+
 func (a NdArray) Sum() NdArray {
 	var total float32 = 0.0
 	for _, v := range a.data {
@@ -80,11 +148,5 @@ func (a NdArray) Sum() NdArray {
 func (a NdArray) Abs() NdArray {
 	return a.UnaryApply(func(x float32) float32 {
 		return float32(math.Abs(float64(x)))
-	})
-}
-
-func (a NdArray) Sigmoid() NdArray {
-	return a.UnaryApply(func(x float32) float32 {
-		return 1 / (1 + float32(math.Exp(-float64(x))))
 	})
 }
