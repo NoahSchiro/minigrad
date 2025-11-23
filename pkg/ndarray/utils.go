@@ -36,6 +36,38 @@ func flatIndex(indices, shape []int) int {
     return idx
 }
 
+// Returns all combinations of indices excluding the axis dimension.
+// Example: shape [2,3,4], axis=1 -> returns lists of form [i, *, k].
+func AllIndexCombos(shape []int, axis int) [][]int {
+    ndim := len(shape)
+    if axis < 0 || axis >= ndim {
+        panic("axis out of range")
+    }
+
+    // New shape with axis removed
+    reduced := append([]int{}, shape[:axis]...)
+    reduced = append(reduced, shape[axis+1:]...)
+
+    total := 1
+    for _, s := range reduced {
+        total *= s
+    }
+
+    res := make([][]int, total)
+
+    for i := 0; i < total; i++ {
+        idx := make([]int, len(reduced))
+        tmp := i
+        for d := len(reduced) - 1; d >= 0; d-- {
+            idx[d] = tmp % reduced[d]
+            tmp /= reduced[d]
+        }
+        res[i] = idx
+    }
+
+    return res
+}
+
 // Recursive pretty printer
 func prettyPrintNd(data []float32, shape []int, indices []int, dim int) string {
     if dim == len(shape) {

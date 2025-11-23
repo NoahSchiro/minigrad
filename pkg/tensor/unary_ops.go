@@ -196,3 +196,72 @@ func (a *Tensor) ReLu() *Tensor {
 		p2: nil,
 	}
 }
+
+func (a *Tensor) Softmax(axis int) *Tensor {
+
+	backward := func(self *Tensor) {
+        // Allocate dx
+        dx := nd.Zero(self.p1.Shape())
+
+        // Shape parameters
+        shape := self.data.Shape()     // same as x.data
+        ndim := len(shape)
+        dim := shape[axis]
+
+        // Precompute index combos excluding axis
+        combos := nd.AllIndexCombos(shape, axis)
+        idxs1 := make([]int, ndim)
+        idxs2 := make([]int, ndim)
+
+        // For each slice of the softmax
+        for _, combo := range combos {
+            ci := 0
+            for d := 0; d < ndim; d++ {
+                if d == axis {
+                    idxs1[d] = 0
+                    idxs2[d] = 0
+                } else {
+                    idxs1[d] = combo[ci]
+                    idxs2[d] = combo[ci]
+                    ci++
+                }
+            }
+
+            // Apply softmax gradient formula:
+            // dL/dx_i = sum_j (delta_ij - y_j) * y_i * dL/dy_j
+
+            for i := 0; i < dim; i++ {
+                idxs1[axis] = i
+                yi := self.data.Get(idxs1)
+
+                var grad float32 = 0
+
+                for j := 0; j < dim; j++ {
+                    idxs2[axis] = j
+                    yj := self.data.Get(idxs2)
+                    dldyj := self.grad.Get(idxs2)
+
+                    if i == j {
+                        grad += (1 - yj) * yi * dldyj
+                    } else {
+                        grad += (-yj) * yi * dldyj
+                    }
+                }
+
+                dx.Set(idxs1, grad)
+            }
+        }
+
+        // Accumulate into parent gradient
+        self.p1.grad = self.p1.grad.Add(dx)
+
+	}
+
+	return &Tensor {
+		data: a.data.Softmax(axis),
+		grad: nd.Zero(a.Shape()),
+		b: backward,
+		p1: a,
+		p2: nil,
+	}
+}
