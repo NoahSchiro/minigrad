@@ -1,25 +1,69 @@
 package ndarray
 
-// Matrix addition
+import (
+	"runtime"
+	"sync"
+)
+
+// Matrix addition (serial or parallel depending on size)
 func (a NdArray) Add(b NdArray) NdArray {
-	
 	// Check that shapes match
 	if !checkShape(a, b) {
 		panic("NdArray add error: Shapes must match")
 	}
 
-	result := a.Clone()
+	// Experimentally, the parallel is only
+	// worth it above 4k FLOPS.
+	if a.size > 4_000 {
+		return a.addParallel(b)
+	} else {
+		return a.addSerial(b)
+	}
+}
 
+// Matrix addition (serially)
+func (a NdArray) addSerial(b NdArray) NdArray {
+	result := a.Clone()
 	for i := range result.data {
 		result.data[i] += b.data[i]
 	}
+	return result
+}
 
+// Matrix addition (parallel)
+func (a NdArray) addParallel(b NdArray) NdArray {
+	result := a.Clone()
+
+	// How much work, how many workers do we
+	// have, and how much work should we give each one?
+	n := len(result.data)
+	workers := runtime.GOMAXPROCS(0)
+	chunk := (n + workers - 1) / workers
+
+	var wg sync.WaitGroup
+	wg.Add(workers)
+
+	for w := range workers {
+		start := w * chunk
+		end := start + chunk
+		if end > n {
+			end = n
+		}
+
+		go func(s, e int) {
+			defer wg.Done()
+			for i := s; i < e; i++ {
+				result.data[i] += b.data[i]
+			}
+		}(start, end)
+	}
+
+	wg.Wait()
 	return result
 }
 
 // Element wise matrix multiplication
 func (a NdArray) ElemMul(b NdArray) NdArray {
-
 	if !checkShape(a, b) {
 		panic("NdArray ElemAdd error: shapes must match")
 	}

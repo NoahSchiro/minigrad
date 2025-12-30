@@ -334,14 +334,88 @@ func TestAdd(t *testing.T) {
 	}
 }
 
-func BenchmarkAdd(b *testing.B) {
-	x := Rand([]int{10,1000,1000})
-	y := Rand([]int{10,1000,1000})
-
+func BenchmarkAddSerial4k(b *testing.B) {
+	x := Rand([]int{16,16,16})
+	y := Rand([]int{16,16,16})
+	
+	b.ResetTimer()
 	for b.Loop() {
-		x.Add(y)
+		x.addSerial(y)
 	}
 }
+
+func BenchmarkAddParallel4k(b *testing.B) {
+	x := Rand([]int{16,16,16})
+	y := Rand([]int{16,16,16})
+
+	b.ResetTimer()
+	for b.Loop() {
+		x.addParallel(y)
+	}
+}
+
+
+
+func BenchmarkAddSerial32k(b *testing.B) {
+	x := Rand([]int{32,32,32})
+	y := Rand([]int{32,32,32})
+	
+	b.ResetTimer()
+	for b.Loop() {
+		x.addSerial(y)
+	}
+}
+
+func BenchmarkAddParallel32k(b *testing.B) {
+	x := Rand([]int{32,32,32})
+	y := Rand([]int{32,32,32})
+
+	b.ResetTimer()
+	for b.Loop() {
+		x.addParallel(y)
+	}
+}
+
+func BenchmarkAddSerial262k(b *testing.B) {
+	x := Rand([]int{64,64,64})
+	y := Rand([]int{64,64,64})
+
+	b.ResetTimer()
+	for b.Loop() {
+		x.addSerial(y)
+	}
+}
+
+func BenchmarkAddParallel262k(b *testing.B) {
+	x := Rand([]int{64,64,64})
+	y := Rand([]int{64,64,64})
+
+	b.ResetTimer()
+	for b.Loop() {
+		x.addParallel(y)
+	}
+}
+
+func BenchmarkAddSerial2M(b *testing.B) {
+	x := Rand([]int{128,128,128})
+	y := Rand([]int{128,128,128})
+
+	b.ResetTimer()
+	for b.Loop() {
+		x.addSerial(y)
+	}
+}
+
+func BenchmarkAddParallel2M(b *testing.B) {
+	x := Rand([]int{128,128,128})
+	y := Rand([]int{128,128,128})
+
+	b.ResetTimer()
+	for b.Loop() {
+		x.addParallel(y)
+	}
+}
+
 //----------- End Binary Ops -----------
 
 
@@ -395,10 +469,31 @@ func TestMul(t *testing.T) {
 	}
 }
 
-func BenchmarkMatMul(b *testing.B) {
-	x := Rand([]int{1,1000,1000})
-	y := Rand([]int{1,1000,1000})
+func BenchmarkMatMul32k(b *testing.B) {
+	x := Rand([]int{32,32,32})
+	y := Rand([]int{32,32,32})
 
+	b.ResetTimer()
+	for b.Loop() {
+		x.MatMul(y)
+	}
+}
+
+func BenchmarkMatMul262k(b *testing.B) {
+	x := Rand([]int{64,64,64})
+	y := Rand([]int{64,64,64})
+
+	b.ResetTimer()
+	for b.Loop() {
+		x.MatMul(y)
+	}
+}
+
+func BenchmarkMatMul2M(b *testing.B) {
+	x := Rand([]int{128,128,128})
+	y := Rand([]int{128,128,128})
+
+	b.ResetTimer()
 	for b.Loop() {
 		x.MatMul(y)
 	}
