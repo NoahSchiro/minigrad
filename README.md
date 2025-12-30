@@ -22,9 +22,14 @@ Install:
 Run tests: 
 `go test ./...`
 
+Benchmark code: 
+`go test ./... -bench=.`
+
 ## Example:
 
-Currently, there is one example for the xor problem which can be found in `cmd/xor.go`
+There is an example for the xor problem which can be found in `cmd/xor/`
+
+There is an example for finding the boundary of a circle in `cmd/circle/`
 
 ## Features and roadmap:
 
