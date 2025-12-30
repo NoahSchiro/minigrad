@@ -396,6 +396,26 @@ func BenchmarkAddParallel262k(b *testing.B) {
 	}
 }
 
+func BenchmarkAddSerial1M(b *testing.B) {
+	x := Rand([]int{1024,1024})
+	y := Rand([]int{1024,1024})
+
+	b.ResetTimer()
+	for b.Loop() {
+		x.addSerial(y)
+	}
+}
+
+func BenchmarkAddParallel1M(b *testing.B) {
+	x := Rand([]int{1024})
+	y := Rand([]int{1024})
+
+	b.ResetTimer()
+	for b.Loop() {
+		x.addParallel(y)
+	}
+}
+
 func BenchmarkAddSerial2M(b *testing.B) {
 	x := Rand([]int{128,128,128})
 	y := Rand([]int{128,128,128})
@@ -469,33 +489,125 @@ func TestMul(t *testing.T) {
 	}
 }
 
-func BenchmarkMatMul32k(b *testing.B) {
+func BenchmarkMatMulSerial3k(b *testing.B) {
+	x := Rand([]int{16,16,12})
+	y := Rand([]int{16,16,12})
+
+	b.ResetTimer()
+	for b.Loop() {
+		x.matMulSerial(y)
+	}
+}
+
+func BenchmarkMatMulParallel3k(b *testing.B) {
+	x := Rand([]int{16,16,12})
+	y := Rand([]int{16,16,12})
+
+	b.ResetTimer()
+	for b.Loop() {
+		x.matMulParallel(y)
+	}
+}
+
+func BenchmarkMatMulSerial4k(b *testing.B) {
+	x := Rand([]int{16,16,16})
+	y := Rand([]int{16,16,16})
+
+	b.ResetTimer()
+	for b.Loop() {
+		x.matMulSerial(y)
+	}
+}
+
+func BenchmarkMatMulParallel4k(b *testing.B) {
+	x := Rand([]int{16,16,16})
+	y := Rand([]int{16,16,16})
+
+	b.ResetTimer()
+	for b.Loop() {
+		x.matMulParallel(y)
+	}
+}
+
+func BenchmarkMatMulSerial32k(b *testing.B) {
 	x := Rand([]int{32,32,32})
 	y := Rand([]int{32,32,32})
 
 	b.ResetTimer()
 	for b.Loop() {
-		x.MatMul(y)
+		x.matMulSerial(y)
 	}
 }
 
-func BenchmarkMatMul262k(b *testing.B) {
+func BenchmarkMatMulParallel32k(b *testing.B) {
+	x := Rand([]int{32,32,32})
+	y := Rand([]int{32,32,32})
+
+	b.ResetTimer()
+	for b.Loop() {
+		x.matMulParallel(y)
+	}
+}
+
+func BenchmarkMatMulSerial262k(b *testing.B) {
 	x := Rand([]int{64,64,64})
 	y := Rand([]int{64,64,64})
 
 	b.ResetTimer()
 	for b.Loop() {
-		x.MatMul(y)
+		x.matMulSerial(y)
 	}
 }
 
-func BenchmarkMatMul2M(b *testing.B) {
+func BenchmarkMatMulParallel262k(b *testing.B) {
+	x := Rand([]int{64,64,64})
+	y := Rand([]int{64,64,64})
+
+	b.ResetTimer()
+	for b.Loop() {
+		x.matMulParallel(y)
+	}
+}
+
+func BenchmarkMatMulSerial1M(b *testing.B) {
+	x := Rand([]int{1024,1024})
+	y := Rand([]int{1024,1024})
+
+	b.ResetTimer()
+	for b.Loop() {
+		x.matMulSerial(y)
+	}
+}
+
+func BenchmarkMatMulParallel1M(b *testing.B) {
+	x := Rand([]int{1024,1024})
+	y := Rand([]int{1024,1024})
+
+	b.ResetTimer()
+	for b.Loop() {
+		x.matMulParallel(y)
+	}
+}
+
+
+
+func BenchmarkMatMulSerial2M(b *testing.B) {
 	x := Rand([]int{128,128,128})
 	y := Rand([]int{128,128,128})
 
 	b.ResetTimer()
 	for b.Loop() {
-		x.MatMul(y)
+		x.matMulSerial(y)
+	}
+}
+
+func BenchmarkMatMulParallel2M(b *testing.B) {
+	x := Rand([]int{128,128,128})
+	y := Rand([]int{128,128,128})
+
+	b.ResetTimer()
+	for b.Loop() {
+		x.matMulParallel(y)
 	}
 }
 //----------- End Ops -----------
