@@ -42,11 +42,17 @@ There is an example for finding the boundary of a circle in `cmd/circle/`
 - [x] SoftMax (targeting v2.1)
 - [x] SGD optimizer
 - [x] Adam optimizer (targeting v2.1)
+- [x] CPU parallelism (targeting v2.1)
+- [ ] CUDA support (targeting v2.1)
 
 ## SCC Report
 
-The goal is to keep the library under 1k lines of code. This excludes test files.
+The goal is to keep the library under 1k lines of code. This excludes test files and examples.
+
+Didn't really take us long to blow past this goal (57 days since v2.0 was released).
+
+When we add CUDA and C, the goal will be to keep each of those under 500 lines of code combined.
 
 | Language | Files | Lines | Blanks | Comments | Code |
 |----------|-------|-------|--------|----------|------|
-| Go | 12 | 1016 | 163 | 74 | 779 |
+| Go       | 12    | 1579  | 262    | 137      | 1180 |
