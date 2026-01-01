@@ -14,6 +14,24 @@ import "github.com/NoahSchiro/minigrad/ndarray"
 import "github.com/NoahSchiro/minigrad/nn"
 ```
 
+## CUDA development:
+
+In order to compile the CUDA code, you need:
+- NVIDIA GPU
+- The appropriate NVIDIA drivers
+- The CUDA toolkit
+
+Verify with the following commands:
+```bash
+# Confirm drivers exist
+nvidia-smi 
+
+# Confirm nvcc exists
+nvcc --version
+```
+
+
+
 ### Dev work:
 
 Install:
