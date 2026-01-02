@@ -1,7 +1,7 @@
 # minigrad
 A minimal implementation of autograd and neural networks. Inspired by [micrograd](https://github.com/karpathy/micrograd) and [pytorch](https://github.com/pytorch/pytorch). This library is meant to be educational and not meant for production code.
 
-## Install and dev work:
+## Install and dev work
 
 Install:
 `go get github.com/NoahSchiro/minigrad@latest`
@@ -14,7 +14,20 @@ import "github.com/NoahSchiro/minigrad/ndarray"
 import "github.com/NoahSchiro/minigrad/nn"
 ```
 
-## CUDA development:
+### Dev work
+
+Install:
+`git clone git@github.com:NoahSchiro/minigrad.git`
+
+Create cuda library following instructions in "Cuda Development"
+
+Run tests: 
+`go test ./...`
+
+Benchmark code: 
+`go test ./... -bench=.`
+
+### CUDA development
 
 In order to compile the CUDA code, you need:
 - NVIDIA GPU
@@ -30,26 +43,21 @@ nvidia-smi
 nvcc --version
 ```
 
+To compile and install the cuda shared library into your env:
+```bash
+cd ./pkg/ndarray/cuda/
+make install
+```
 
+This creates `libcuda.so`, moves it to `/usr/local/lib/` and installs it system wide with `ldconfig`.
 
-### Dev work:
-
-Install:
-`git clone git@github.com:NoahSchiro/minigrad.git`
-
-Run tests: 
-`go test ./...`
-
-Benchmark code: 
-`go test ./... -bench=.`
-
-## Example:
+## Example
 
 There is an example for the xor problem which can be found in `cmd/xor/`
 
 There is an example for finding the boundary of a circle in `cmd/circle/`
 
-## Features and roadmap:
+## Features and roadmap
 
 - [x] Autograd engine
 - [x] Linear layers

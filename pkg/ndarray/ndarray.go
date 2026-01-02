@@ -1,17 +1,26 @@
 package ndarray
 
+/*
+#cgo CFLAGS: -I${SRCDIR}/cuda
+#cgo LDFLAGS: -L${SRCDIR}/cuda -lcuda
+#include "vector.h"
+*/
+import "C"
+import "unsafe"
+
 import "fmt"
 import "math/rand/v2"
 
 type Device int
 
 const (
-	Cpu Device = iota // Device = 0
-	Cuda              // Device = 1
+	CPU Device = iota // Device = 0
+	CUDA              // Device = 1
 )
 
 type NdArray struct {
-	data []float32
+	data []float32           // Implicitly, this is cpu only
+	gpuData unsafe.Pointer
 	shape []int
 	size int
 	ndim int
@@ -25,7 +34,7 @@ func Empty() NdArray {
 		shape: []int{1},
 		size: 1,
 		ndim: 1,
-		device: Cpu,
+		device: CPU,
 	}
 }
 
@@ -42,7 +51,7 @@ func New(data []float32, shape []int) NdArray {
 		shape: shape,
 		size: prod,
 		ndim: len(shape),
-		device: Cpu,
+		device: CPU,
 	}
 }
 
@@ -61,7 +70,7 @@ func NewFill(data float32, shape []int) NdArray {
 		shape: new_shape,
 		size: prod,
 		ndim: len(shape),
-		device: Cpu,
+		device: CPU,
 	}
 }
 
@@ -85,7 +94,7 @@ func Rand(shape []int) NdArray {
 		shape: shape,
 		size: prod,
 		ndim: len(shape),
-		device: Cpu,
+		device: CPU,
 	}
 }
 
@@ -106,10 +115,12 @@ func Uniform(shape []int, lower, upper float32) NdArray {
 		shape: shape,
 		size: prod,
 		ndim: len(shape),
-		device: Cpu,
+		device: CPU,
 	}
 }
 
+// TODO: This should clone on whatever
+// device the "a" is on
 func (a NdArray) Clone() NdArray {
 	new_data := make([]float32, a.size)
 	copy(new_data, a.data)
@@ -121,14 +132,50 @@ func (a NdArray) Clone() NdArray {
 		shape: new_shape,
 		size: a.size,
 		ndim: a.ndim,
-		device: Cpu,
+		device: CPU,
+	}
+}
+
+// Move an NdArray to a particular device
+func (a *NdArray) To(device Device) {
+	if a.device == CPU && device == CUDA {
+
+		// Get the cuda pointer
+		d_data := C.cuda_create(
+			(*C.float)(unsafe.Pointer(&a.data)),
+			C.size_t(a.size),
+		)
+
+		a.data = nil // Null out the CPU data
+		// Point the pointer to the device
+		a.gpuData = unsafe.Pointer(d_data)
+		a.device = CUDA
+	}
+	if a.device == CUDA && device == CPU {
+
+		// Allocate mem on the CPU
+		h_data := make([]float32, a.size)
+		d_data := (*C.float)(unsafe.Pointer(&a.data))
+
+		// Read from cuda and free the memory there
+		C.cuda_read(
+			d_data,
+			(*C.float)(unsafe.Pointer(&h_data)),
+			C.size_t(a.size),
+		)
+		C.cuda_free(d_data)
+		a.data = h_data
+		a.device = CPU
 	}
 }
 
 // Display
 func (a NdArray) Print() string {
-	s := prettyPrintNd(a.data, a.shape, []int{}, 0)
-	return s
+	if a.device == CUDA {
+		return "cannot print a NdArray on the GPU!"
+	} else {
+		return prettyPrintNd(a.data, a.shape, []int{}, 0)
+	}
 }
 
 // Get a certain index within the nd array
@@ -244,7 +291,7 @@ func (a NdArray) T() NdArray {
 		shape: newShape,
 		size:  a.size,
 		ndim:  a.ndim,
-		device: Cpu,
+		device: CPU,
 	}
 }
 
@@ -265,5 +312,14 @@ func (a NdArray) Size() int {
 }
 func (a NdArray) Ndim() int {
 	return a.ndim
+}
+func (a NdArray) Device() string {
+	if a.device == CPU {
+		return "cpu"
+	} else if a.device == CUDA {
+		return "cuda"
+	} else {
+		return "undefined"
+	}
 }
 // End getters

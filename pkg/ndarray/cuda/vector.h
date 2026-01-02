@@ -1,7 +1,8 @@
-#ifndef VECTOR_H
-#define VECTOR_H
+#pragma once
 
-#include <stddef.h>
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 // Allocates and copies memory to device
 float* cuda_create(const float* h_data, size_t n);
@@ -16,4 +17,6 @@ void cuda_free(float* d_data);
 // C wrapper code to vector addition kernel
 void cuda_vector_add(const float*, const float*, float*, int n);
 
+#ifdef __cplusplus
+}
 #endif
