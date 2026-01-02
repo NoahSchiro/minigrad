@@ -3,11 +3,19 @@ package ndarray
 import "fmt"
 import "math/rand/v2"
 
+type Device int
+
+const (
+	Cpu Device = iota // Device = 0
+	Cuda              // Device = 1
+)
+
 type NdArray struct {
 	data []float32
 	shape []int
 	size int
 	ndim int
+	device Device
 }
 
 // Create an empty array
@@ -17,6 +25,7 @@ func Empty() NdArray {
 		shape: []int{1},
 		size: 1,
 		ndim: 1,
+		device: Cpu,
 	}
 }
 
@@ -33,6 +42,7 @@ func New(data []float32, shape []int) NdArray {
 		shape: shape,
 		size: prod,
 		ndim: len(shape),
+		device: Cpu,
 	}
 }
 
@@ -51,6 +61,7 @@ func NewFill(data float32, shape []int) NdArray {
 		shape: new_shape,
 		size: prod,
 		ndim: len(shape),
+		device: Cpu,
 	}
 }
 
@@ -74,6 +85,7 @@ func Rand(shape []int) NdArray {
 		shape: shape,
 		size: prod,
 		ndim: len(shape),
+		device: Cpu,
 	}
 }
 
@@ -94,6 +106,7 @@ func Uniform(shape []int, lower, upper float32) NdArray {
 		shape: shape,
 		size: prod,
 		ndim: len(shape),
+		device: Cpu,
 	}
 }
 
@@ -108,6 +121,7 @@ func (a NdArray) Clone() NdArray {
 		shape: new_shape,
 		size: a.size,
 		ndim: a.ndim,
+		device: Cpu,
 	}
 }
 
@@ -230,6 +244,7 @@ func (a NdArray) T() NdArray {
 		shape: newShape,
 		size:  a.size,
 		ndim:  a.ndim,
+		device: Cpu,
 	}
 }
 
