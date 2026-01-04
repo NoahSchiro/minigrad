@@ -4,18 +4,22 @@
 extern "C" {
 #endif
 
-// Allocates and copies memory to device
-float* cuda_create(const float* h_data, size_t n);
 
-// Given a pointer on the host and on the device,
-// copy data to host pointer.
-void cuda_read(float* h_data, float* d_data, size_t n);
+// Create some memory on device
+float* cuda_create(size_t n);
+
+// Allocates and copies memory to device
+float* cuda_write(const float* h_data, size_t n);
+
+// Given a pointer on the device,
+// return a pointer to the host
+float* cuda_read(float* d_data, size_t n);
 
 // Given a cuda pointer, free that memory
 void cuda_free(float* d_data);
 
 // C wrapper code to vector addition kernel
-void cuda_vector_add(const float*, const float*, float*, int n);
+float* cuda_vector_add(const float *d_a, const float *d_b, int n);
 
 #ifdef __cplusplus
 }

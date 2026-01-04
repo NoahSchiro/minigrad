@@ -12,56 +12,65 @@ void vector_add(const float *a, const float *b, float *c, int n) {
 }
 
 extern "C"
-float* cuda_create(const float* data, size_t n) {
+void cuda_get_err() {
+    cudaError_t err = cudaGetLastError();
+    if(cudaSuccess != err) {
+        fprintf(
+			stderr,
+			"CUDA error : (%d) %s.\n",
+            (int)err, cudaGetErrorString(err)
+		);
+        exit(1);
+    }
+}
+
+extern "C"
+float* cuda_create(size_t n) {
 	float* d_data;
-	cudaMalloc(&d_data, n);
-	cudaMemcpy(d_data, data, n, cudaMemcpyHostToDevice);
+	cudaMalloc(&d_data, n*sizeof(float));
+	cuda_get_err();
+	return d_data;
+}
+
+
+extern "C"
+float* cuda_write(const float* data, size_t n) {
+	float* d_data;
+	cudaMalloc(&d_data, n*sizeof(float));
+	cuda_get_err();
+	cudaMemcpy(d_data, data, n*sizeof(float), cudaMemcpyHostToDevice);
+	cuda_get_err();
 	return d_data;
 }
 
 extern "C"
-void cuda_read(float* h_data, float* d_data, size_t n) {
-    cudaMemcpy(h_data, d_data, n, cudaMemcpyDeviceToHost);
+float* cuda_read(float* d_data, size_t n) {
+	float* h_data = (float*)malloc(n * sizeof(float));
+    cudaMemcpy(h_data, d_data, n*sizeof(float), cudaMemcpyDeviceToHost);
+	cuda_get_err();
+	return h_data;
 }
 
 extern "C"
 void cuda_free(float* d_data) {
 	cudaFree(d_data);
+	cuda_get_err();
 }
 
 // C wrapper code exposed by header
+// Inputs must be on the GPU already and the output is placed on the GPU
 extern "C"
-void cuda_vector_add(const float *h_a, const float *h_b, float *h_c, int n) {
-
-    size_t size = n * sizeof(float);
-
-	float *d_a = cuda_create(h_a, size);
-	float *d_b = cuda_create(h_b, size);
-	float *d_c = cuda_create(h_c, size);
+float* cuda_vector_add(const float *d_a, const float *d_b, int n) {
+	
+	float *d_c = cuda_create(n); 
 
     // Launch config
     int threadsPerBlock = 256;
     int blocksPerGrid = (n + threadsPerBlock - 1) / threadsPerBlock;
 
-    // Kernel timing using CUDA events
-    cudaEvent_t start, stop;
-    cudaEventCreate(&start);
-    cudaEventCreate(&stop);
-    cudaEventRecord(start);
-
     vector_add<<<blocksPerGrid, threadsPerBlock>>>(d_a, d_b, d_c, n);
+	cudaDeviceSynchronize();
+	cuda_get_err();
 
-    cudaEventRecord(stop);
-    cudaEventSynchronize(stop);
-
-    float milliseconds = 0;
-    cudaEventElapsedTime(&milliseconds, start, stop);
-
-    cudaMemcpy(h_c, d_c, size, cudaMemcpyDeviceToHost);
-
-    printf("GPU kernel elapsed time: %f ms\n", milliseconds);
-
-    cuda_free(d_a);
-    cuda_free(d_b);
-    cuda_free(d_c);
+	return d_c;
 }
