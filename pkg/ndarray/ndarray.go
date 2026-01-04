@@ -55,23 +55,6 @@ func New(data []float32, shape []int) NdArray {
 	}
 }
 
-// Given data and a shape, construct a new array if the data lives on CUDA
-func CudaNew(data unsafe.Pointer, shape []int) NdArray {
-
-	prod := intArrayProduct(shape)
-	// You better hope the shape produce and the data length match...
-
-	return NdArray{
-		gpuData: data,
-		shape: shape,
-		size: prod,
-		ndim: len(shape),
-		device: CUDA,
-	}
-}
-
-
-
 // Given a number and a shape, create an array filled with that number
 func NewFill(data float32, shape []int) NdArray {
 

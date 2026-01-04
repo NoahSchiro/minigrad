@@ -1,23 +1,34 @@
 package main
 
 import "fmt"
+import "time"
 import nd "github.com/NoahSchiro/minigrad/pkg/ndarray"
 
 func main() {
 
-	x := nd.NewFill(1., []int{2,2})
+	x := nd.Rand([]int{1000,1000})
+	y := nd.Rand([]int{1000,1000})
 
-	fmt.Println(x.Print())
-	fmt.Println(x.Device())
+    cpu_start := time.Now()
+	a := x.Add(y)
+    cpu_elapsed := time.Since(cpu_start)
+	fmt.Printf("CPU elapsed time: %d\n", cpu_elapsed.Nanoseconds())
 
 	x.To(nd.CUDA)
+	y.To(nd.CUDA)
 
-	fmt.Println(x.Print())
-	fmt.Println(x.Device())
+    cuda_start := time.Now()
+	b := x.Add(y)
+    cuda_elapsed := time.Since(cuda_start)
+	fmt.Printf("CUDA elapsed time: %d\n", cuda_elapsed.Nanoseconds())
 
-	x.To(nd.CPU)
-	
-	fmt.Println(x.Print())
-	fmt.Println(x.Device())
+	b.To(nd.CPU)
+
+	for i := range a.Size() {
+		if a.GetLinear(i) != b.GetLinear(i) {
+			fmt.Println("A and B do not match")
+		}
+	}
+	fmt.Println("A and B do match")
 
 }

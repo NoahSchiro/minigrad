@@ -1,24 +1,47 @@
 package ndarray
 
+/*
+#cgo CFLAGS: -I${SRCDIR}/cuda
+#cgo LDFLAGS: -L${SRCDIR}/cuda -lcuda
+#include "vector.h"
+*/
+import "C"
+import "unsafe"
+
 import (
 	"runtime"
 	"sync"
 )
 
-// Matrix addition (serial or parallel depending on size)
+// Matrix addition
+// Serial or parallel depending on size
+// CPU or CUDA depending on a.device
 func (a NdArray) Add(b NdArray) NdArray {
 	// Check that shapes match
 	if !checkShape(a, b) {
 		panic("NdArray add error: Shapes must match")
 	}
 
-	// Experimentally, the parallel is only
-	// worth it above 4k elements.
-	if a.size > 4_000 {
-		return a.addParallel(b)
-	} else {
-		return a.addSerial(b)
+	// Computation can only happen if they
+	// are on the same device
+	if a.device != b.device {
+		panic("NdArray add error: Arrays must be on same device")
 	}
+
+	if a.device == CPU {
+		// Experimentally, the parallel is only
+		// worth it above 4k elements.
+		if a.size > 4_000 {
+			return a.addParallel(b)
+		} else {
+			return a.addSerial(b)
+		}
+	} else if a.device == CUDA {
+		return a.addCuda(b)
+	} else {
+		panic("NdArray add error: Device of array not recognized")
+	}
+
 }
 
 // Matrix addition (serially)
@@ -60,6 +83,25 @@ func (a NdArray) addParallel(b NdArray) NdArray {
 
 	wg.Wait()
 	return result
+}
+
+// Add a and b assuming they are on device,
+// and put answer on device
+func (a NdArray) addCuda(b NdArray) NdArray {
+	d_data := C.cuda_vector_add(
+		(*C.float)(a.gpuData),
+		(*C.float)(b.gpuData),
+		(C.int)(a.size),
+	)
+
+	return NdArray{
+		data: nil,
+		gpuData: unsafe.Pointer(d_data),
+		shape: a.shape,
+		size: a.size,
+		ndim: a.ndim,
+		device: CUDA,
+	}
 }
 
 // Element wise matrix multiplication
