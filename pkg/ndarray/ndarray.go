@@ -55,6 +55,23 @@ func New(data []float32, shape []int) NdArray {
 	}
 }
 
+// Given data and a shape, construct a new array if the data lives on CUDA
+func CudaNew(data unsafe.Pointer, shape []int) NdArray {
+
+	prod := intArrayProduct(shape)
+	// You better hope the shape produce and the data length match...
+
+	return NdArray{
+		gpuData: data,
+		shape: shape,
+		size: prod,
+		ndim: len(shape),
+		device: CUDA,
+	}
+}
+
+
+
 // Given a number and a shape, create an array filled with that number
 func NewFill(data float32, shape []int) NdArray {
 
@@ -141,8 +158,8 @@ func (a *NdArray) To(device Device) {
 	if a.device == CPU && device == CUDA {
 
 		// Get the cuda pointer
-		d_data := C.cuda_create(
-			(*C.float)(unsafe.Pointer(&a.data)),
+		d_data := C.cuda_write(
+			(*C.float)(unsafe.Pointer(&a.data[0])),
 			C.size_t(a.size),
 		)
 
@@ -153,18 +170,15 @@ func (a *NdArray) To(device Device) {
 	}
 	if a.device == CUDA && device == CPU {
 
-		// Allocate mem on the CPU
-		h_data := make([]float32, a.size)
-		d_data := (*C.float)(unsafe.Pointer(&a.data))
-
-		// Read from cuda and free the memory there
-		C.cuda_read(
-			d_data,
-			(*C.float)(unsafe.Pointer(&h_data)),
+		// Read from cuda (allocates mem on cpu)
+		// and free the memory there
+		h_data := C.cuda_read(
+			(*C.float)(a.gpuData),
 			C.size_t(a.size),
 		)
-		C.cuda_free(d_data)
-		a.data = h_data
+		C.cuda_free((*C.float)(a.gpuData))
+		a.gpuData = nil
+		a.data = unsafe.Slice((*float32)(h_data), a.size)
 		a.device = CPU
 	}
 }
