@@ -6,8 +6,8 @@ import nd "github.com/NoahSchiro/minigrad/pkg/ndarray"
 
 func main() {
 
-	x := nd.Rand([]int{1000,1000})
-	y := nd.Rand([]int{1000,1000})
+	x := nd.Rand([]int{5000,5000})
+	y := nd.Rand([]int{5000,5000})
 
     cpu_start := time.Now()
 	a := x.Add(y)

@@ -1,15 +1,6 @@
 #include <stdio.h>
 #include <cuda_runtime.h>
-
-
-// Vector addition
-__global__
-void vector_add(const float *a, const float *b, float *c, int n) {
-    int i = blockIdx.x * blockDim.x + threadIdx.x;
-    if (i < n) {
-        c[i] = a[i] + b[i];
-    }
-}
+#include "ndarray.h"
 
 extern "C"
 void cuda_get_err() {
@@ -22,6 +13,11 @@ void cuda_get_err() {
 		);
         exit(1);
     }
+}
+
+extern "C"
+void cuda_sync() {
+	cudaDeviceSynchronize();
 }
 
 extern "C"
@@ -55,22 +51,4 @@ extern "C"
 void cuda_free(float* d_data) {
 	cudaFree(d_data);
 	cuda_get_err();
-}
-
-// C wrapper code exposed by header
-// Inputs must be on the GPU already and the output is placed on the GPU
-extern "C"
-float* cuda_vector_add(const float *d_a, const float *d_b, int n) {
-	
-	float *d_c = cuda_create(n); 
-
-    // Launch config
-    int threadsPerBlock = 256;
-    int blocksPerGrid = (n + threadsPerBlock - 1) / threadsPerBlock;
-
-    vector_add<<<blocksPerGrid, threadsPerBlock>>>(d_a, d_b, d_c, n);
-	cudaDeviceSynchronize();
-	cuda_get_err();
-
-	return d_c;
 }

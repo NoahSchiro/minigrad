@@ -5,10 +5,11 @@ LIB_DIR = /usr/local/lib/
 
 LIB_FLAGS = -Xcompiler -fPIC -shared
 
-OBJ = main.o vector.o
+OBJ = main.o
 
 SRC_C = main.c
-SRC_CU = vector.cu
+SRC_CU = cuda_utils.cu cuda_ops.cu
+OBJ_CU = cuda_utils.o  cuda_ops.o
 
 all: $(EXE) lib
 
@@ -19,14 +20,15 @@ install: lib
 	sudo cp $(LIB) $(LIB_DIR)
 	sudo ldconfig
 
-$(EXE): $(OBJ)
-	$(NVCC) $(OBJ) -o $(EXE)
+$(EXE): $(OBJ) $(OBJ_CU)
+	$(NVCC) $(OBJ) $(OBJ_CU) -o $(EXE)
 
-main.o: $(SRC_C)
-	$(NVCC) -c $(SRC_C) -o main.o
+$(OBJ): $(SRC_C)
+	$(NVCC) -c $(SRC_C) -o $(OBJ)
 
-vector.o: $(SRC_CU)
-	$(NVCC) -c $(SRC_CU) -o vector.o
+# Compile CUDA sources
+%.o: %.cu
+	$(NVCC) $(NVCCFLAGS) -c $< -o $@
 
 clean:
 	rm -f $(EXE) $(LIB) *.o
