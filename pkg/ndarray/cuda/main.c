@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include "ndarray.h"
 
-int main() {
+void basic_ops() {
 	// Init
 	size_t n = 10;
 	float* a = (float*)malloc(n * sizeof(float));
@@ -37,6 +37,17 @@ int main() {
 
 	// Free up the host c
 	free(h_c);
+}
 
+int main() {
+
+	int shape[] = {2,2,3,3};
+	ndarray_t* a = ndarray_create(shape, 4);
+	// Fill
+	for (int i = 0; i < a->size; i++) {
+		a->data[i] = 3.;
+	}
+	ndarray_print(a);
+	ndarray_free(a);
 	return 0;
 }

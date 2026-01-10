@@ -4,6 +4,17 @@
 extern "C" {
 #endif
 
+typedef struct {
+	float* data;
+	int*   shape;
+	int    ndim;
+	int    size;
+} ndarray_t;
+
+ndarray_t* ndarray_create(int* shape, int ndim);
+void ndarray_print(ndarray_t* arr);
+void ndarray_free(ndarray_t* arr);
+
 // Extract last error from cuda (if there is one)
 // defined in cuda_utils.cu
 void cuda_get_err();
