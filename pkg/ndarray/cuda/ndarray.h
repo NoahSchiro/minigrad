@@ -33,6 +33,10 @@ void cuda_free(float* d_data);
 // defined in cuda_ops.cu
 float* cuda_add(const float *d_a, const float *d_b, int n);
 
+// Multiply two vectors (element wise)
+// defined in cuda_ops.cu
+float* cuda_elem_mul(const float *d_a, const float *d_b, int n);
+
 // Apply relu to every element of a vector
 // defined in cuda_ops.cu
 float* cuda_relu(const float *d_in, int n);

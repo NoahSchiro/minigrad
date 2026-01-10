@@ -28,6 +28,26 @@ float* cuda_add(const float *d_a, const float *d_b, int n) {
 	return d_c;
 }
 
+__global__
+void vector_elem_mul(const float *a, const float *b, float *c, int n) {
+    int i = blockIdx.x * blockDim.x + threadIdx.x;
+    if (i < n) {
+        c[i] = a[i] * b[i];
+    }
+}
+
+float* cuda_elem_mul(const float *d_a, const float *d_b, int n) {
+	float *d_c = cuda_create(n); 
+
+    int threadsPerBlock = 256;
+    int blocksPerGrid = (n + threadsPerBlock - 1) / threadsPerBlock;
+
+    vector_elem_mul<<<blocksPerGrid, threadsPerBlock>>>(d_a, d_b, d_c, n);
+	cuda_get_err();
+
+	return d_c;
+}
+
 // Vector unary apply of ReLU
 __global__
 void vector_relu(const float* in, float* out, int n) {
