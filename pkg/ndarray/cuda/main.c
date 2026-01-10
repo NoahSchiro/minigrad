@@ -21,19 +21,20 @@ int main() {
 	// No longer need host a and b
 	free(a); //free(b);
 
-	float* d_c = cuda_scalar_pow(d_a, -2, n);
+	float* d_c = cuda_sum(d_a, n);
 
 	cuda_sync();
 
 	// Move output back to CPU
-	float* h_c = cuda_read(d_c, n);
+	float* h_c = cuda_read(d_c, 1);
 
 	// No longer need the device pointers
 	cuda_free(d_a); /*cuda_free(d_b);*/ cuda_free(d_c);
 
-	for (int i=0; i<n; i++) {
-		printf("%f\n", h_c[i]);
-	}
+	printf("Sum: %f\n", h_c[0]);
+	// for (int i=0; i<n; i++) {
+	// 	printf("%f\n", h_c[i]);
+	// }
 
 	// Free up the host c
 	free(h_c);

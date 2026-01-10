@@ -2,7 +2,6 @@
 #include <cuda_runtime.h>
 #include "ndarray.h"
 
-extern "C"
 void cuda_get_err() {
     cudaError_t err = cudaGetLastError();
     if(cudaSuccess != err) {
@@ -15,12 +14,10 @@ void cuda_get_err() {
     }
 }
 
-extern "C"
 void cuda_sync() {
 	cudaDeviceSynchronize();
 }
 
-extern "C"
 float* cuda_create(size_t n) {
 	float* d_data;
 	cudaMalloc(&d_data, n*sizeof(float));
@@ -29,7 +26,6 @@ float* cuda_create(size_t n) {
 }
 
 
-extern "C"
 float* cuda_write(const float* data, size_t n) {
 	float* d_data;
 	cudaMalloc(&d_data, n*sizeof(float));
@@ -39,7 +35,6 @@ float* cuda_write(const float* data, size_t n) {
 	return d_data;
 }
 
-extern "C"
 float* cuda_read(float* d_data, size_t n) {
 	float* h_data = (float*)malloc(n * sizeof(float));
     cudaMemcpy(h_data, d_data, n*sizeof(float), cudaMemcpyDeviceToHost);
@@ -47,7 +42,6 @@ float* cuda_read(float* d_data, size_t n) {
 	return h_data;
 }
 
-extern "C"
 void cuda_free(float* d_data) {
 	cudaFree(d_data);
 	cuda_get_err();
