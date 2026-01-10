@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <cuda_runtime.h>
+#include <math.h>
 #include "ndarray.h"
 
 // Vector addition
@@ -133,6 +134,27 @@ float* cuda_scalar_div(const float *d_in, const float scalar, int n) {
 
     vector_scalar_div<<<blocksPerGrid, threadsPerBlock>>>(
 		d_in, scalar, d_out, n
+	);
+    cuda_get_err();
+    return d_out;
+}
+
+__global__
+void vector_scalar_pow(const float* in, const float power, float* out, int n) {
+    int i = blockIdx.x * blockDim.x + threadIdx.x;
+    if (i < n) {
+        out[i] = powf(in[i], power);
+    }
+}
+
+float* cuda_scalar_pow(const float *d_in, const float power, int n) {
+	float* d_out = cuda_create(n);
+
+    int threadsPerBlock = 256;
+    int blocksPerGrid = (n + threadsPerBlock - 1) / threadsPerBlock;
+
+    vector_scalar_pow<<<blocksPerGrid, threadsPerBlock>>>(
+		d_in, power, d_out, n
 	);
     cuda_get_err();
     return d_out;

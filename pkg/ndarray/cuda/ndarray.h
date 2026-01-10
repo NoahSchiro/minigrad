@@ -53,6 +53,9 @@ float* cuda_scalar_mul(const float *d_in, const float scalar, int n);
 // defined in cuda_ops.cu
 float* cuda_scalar_div(const float *d_in, const float scalar, int n);
 
+// Raise every element of a vector to a certain power
+// defined in cuda_ops.cu
+float* cuda_scalar_pow(const float *d_in, const float power, int n);
 
 #ifdef __cplusplus
 }
