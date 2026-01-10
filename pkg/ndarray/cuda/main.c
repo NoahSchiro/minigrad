@@ -39,15 +39,25 @@ void basic_ops() {
 	free(h_c);
 }
 
-int main() {
+void transpose() {
 
-	int shape[] = {2,2,3,3};
-	ndarray_t* a = ndarray_create(shape, 4);
-	// Fill
-	for (int i = 0; i < a->size; i++) {
-		a->data[i] = 3.;
+	int shape[] = {3,2};
+	ndarray_t* a = ndarray_create(shape, 2);
+	for (int i=0; i<a->size; i++) {
+		a->data[i] = (float)i;
 	}
 	ndarray_print(a);
+	ndarray_to_cuda(a);
+
+	ndarray_t* b = cuda_transpose(a);
 	ndarray_free(a);
+	ndarray_from_cuda(b);
+	
+	ndarray_print(b);
+	ndarray_free(b);
+}
+
+int main() {
+	transpose();
 	return 0;
 }
