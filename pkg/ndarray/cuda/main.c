@@ -10,7 +10,7 @@ int main() {
 	float* a = (float*)malloc(n * sizeof(float));
 	//float* b = (float*)malloc(n * sizeof(float));
 	for (size_t i=0; i<n; i++) {
-		a[i] = -1.0;
+		a[i] = -2.0;
 		//b[i] = 1.0;
 	}
 
@@ -21,7 +21,7 @@ int main() {
 	// No longer need host a and b
 	free(a); //free(b);
 
-	float* d_c = cuda_scalar_add(d_a, 5, n);
+	float* d_c = cuda_scalar_mul(d_a, 5, n);
 
 	cuda_sync();
 

@@ -6,6 +6,7 @@ __pycache__/
 # C extensions
 *.so
 *.o
+main  # Cuda exe
 
 # Distribution / packaging
 .Python

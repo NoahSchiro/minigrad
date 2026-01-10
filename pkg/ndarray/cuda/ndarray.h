@@ -45,6 +45,10 @@ float* cuda_sigmoid(const float *d_in, int n);
 // defined in cuda_ops.cu
 float* cuda_scalar_add(const float *d_in, const float scalar, int n);
 
+// Multiply a scalar to every element of a vector
+// defined in cuda_ops.cu
+float* cuda_scalar_mul(const float *d_in, const float scalar, int n);
+
 #ifdef __cplusplus
 }
 #endif

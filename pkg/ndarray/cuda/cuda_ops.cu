@@ -75,7 +75,6 @@ float* cuda_sigmoid(const float* d_in, int n) {
     return d_out;
 }
 
-// Vector unary apply of Sigmoid
 __global__
 void vector_scalar_add(const float* in, const float scalar, float* out, int n) {
     int i = blockIdx.x * blockDim.x + threadIdx.x;
@@ -91,6 +90,27 @@ float* cuda_scalar_add(const float *d_in, const float scalar, int n) {
     int blocksPerGrid = (n + threadsPerBlock - 1) / threadsPerBlock;
 
     vector_scalar_add<<<blocksPerGrid, threadsPerBlock>>>(
+		d_in, scalar, d_out, n
+	);
+    cuda_get_err();
+    return d_out;
+}
+
+__global__
+void vector_scalar_mul(const float* in, const float scalar, float* out, int n) {
+    int i = blockIdx.x * blockDim.x + threadIdx.x;
+    if (i < n) {
+        out[i] = in[i]*scalar;
+    }
+}
+
+float* cuda_scalar_mul(const float *d_in, const float scalar, int n) {
+	float* d_out = cuda_create(n);
+
+    int threadsPerBlock = 256;
+    int blocksPerGrid = (n + threadsPerBlock - 1) / threadsPerBlock;
+
+    vector_scalar_mul<<<blocksPerGrid, threadsPerBlock>>>(
 		d_in, scalar, d_out, n
 	);
     cuda_get_err();
