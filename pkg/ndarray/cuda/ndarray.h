@@ -49,6 +49,11 @@ float* cuda_scalar_add(const float *d_in, const float scalar, int n);
 // defined in cuda_ops.cu
 float* cuda_scalar_mul(const float *d_in, const float scalar, int n);
 
+// Divide every element of a vector by a scalar
+// defined in cuda_ops.cu
+float* cuda_scalar_div(const float *d_in, const float scalar, int n);
+
+
 #ifdef __cplusplus
 }
 #endif

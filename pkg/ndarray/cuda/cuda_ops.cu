@@ -116,3 +116,24 @@ float* cuda_scalar_mul(const float *d_in, const float scalar, int n) {
     cuda_get_err();
     return d_out;
 }
+
+__global__
+void vector_scalar_div(const float* in, const float scalar, float* out, int n) {
+    int i = blockIdx.x * blockDim.x + threadIdx.x;
+    if (i < n) {
+        out[i] = in[i]/scalar;
+    }
+}
+
+float* cuda_scalar_div(const float *d_in, const float scalar, int n) {
+	float* d_out = cuda_create(n);
+
+    int threadsPerBlock = 256;
+    int blocksPerGrid = (n + threadsPerBlock - 1) / threadsPerBlock;
+
+    vector_scalar_div<<<blocksPerGrid, threadsPerBlock>>>(
+		d_in, scalar, d_out, n
+	);
+    cuda_get_err();
+    return d_out;
+}

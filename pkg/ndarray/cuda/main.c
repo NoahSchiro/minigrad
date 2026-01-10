@@ -21,7 +21,7 @@ int main() {
 	// No longer need host a and b
 	free(a); //free(b);
 
-	float* d_c = cuda_scalar_mul(d_a, 5, n);
+	float* d_c = cuda_scalar_div(d_a, 5, n);
 
 	cuda_sync();
 
