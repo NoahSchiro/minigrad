@@ -9,11 +9,16 @@ typedef struct {
 	int*   shape;
 	int    ndim;
 	int    size;
+	int    device; // 0->CPU, 1->CUDA
 } ndarray_t;
 
 ndarray_t* ndarray_create(int* shape, int ndim);
 void ndarray_print(ndarray_t* arr);
 void ndarray_free(ndarray_t* arr);
+
+// Note that only arr->data is moved to cuda
+void ndarray_to_cuda(ndarray_t* arr);
+void ndarray_from_cuda(ndarray_t* arr);
 
 // Extract last error from cuda (if there is one)
 // defined in cuda_utils.cu
@@ -84,7 +89,8 @@ float* cuda_abs(const float *d_in, int n);
 // defined in cuda_ops.cu
 float* cuda_sum(const float *d_in, int n);
 
-
+// Transpose a vector (must be on cuda)
+ndarray_t* cuda_transpose(const ndarray_t* d_in);
 
 #ifdef __cplusplus
 }

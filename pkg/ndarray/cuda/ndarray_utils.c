@@ -17,9 +17,33 @@ ndarray_t* ndarray_create(int* shape, int ndim) {
 
 	res->ndim = ndim;
 	res->size = size;
+	res->device = 0;
 	return res;
 }
 
+void ndarray_free(ndarray_t* arr) {
+
+	// If on cuda
+	if (arr->device) cuda_free(arr->data);
+	else             free(arr->data);
+
+	free(arr->shape);
+	free(arr);
+}
+
+void ndarray_to_cuda(ndarray_t* arr) {
+	float* cuda_ptr = cuda_write(arr->data, arr->size);
+	free(arr->data);
+	arr->data = cuda_ptr;
+	arr->device = 1;
+}
+
+void ndarray_from_cuda(ndarray_t* arr) {
+	float* cuda_data =  cuda_read(arr->data, arr->size);
+	arr->data = (float*)malloc(arr->size * sizeof(float));
+	memcpy(arr->data, cuda_data, arr->size*sizeof(float));
+	arr->device = 0;
+}
 
 // Helper function: recursively print array
 void ndarray_print_recursive(
@@ -83,9 +107,3 @@ void ndarray_print(ndarray_t* arr) {
 }
 
 
-
-void ndarray_free(ndarray_t* arr) {
-	free(arr->data);
-	free(arr->shape);
-	free(arr);
-}
