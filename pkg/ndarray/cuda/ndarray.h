@@ -29,17 +29,21 @@ float* cuda_read(float* d_data, size_t n);
 // defined in cuda_utils.cu
 void cuda_free(float* d_data);
 
-// C wrapper code to vector addition kernel
+// Add two vectors
 // defined in cuda_ops.cu
-float* cuda_vector_add(const float *d_a, const float *d_b, int n);
+float* cuda_add(const float *d_a, const float *d_b, int n);
 
-// C wrapper code to vector unary apply of relu kernel
+// Apply relu to every element of a vector
 // defined in cuda_ops.cu
-float* cuda_vector_relu(const float *d_in, int n);
+float* cuda_relu(const float *d_in, int n);
 
-// C wrapper code to vector unary apply of relu kernel
+// Apply sigmoid to every element of a vector
 // defined in cuda_ops.cu
-float* cuda_vector_sigmoid(const float *d_in, int n);
+float* cuda_sigmoid(const float *d_in, int n);
+
+// Add a scalar to every element of a vector
+// defined in cuda_ops.cu
+float* cuda_scalar_add(const float *d_in, const float scalar, int n);
 
 #ifdef __cplusplus
 }
