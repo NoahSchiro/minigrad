@@ -171,6 +171,27 @@ float* cuda_neg(const float *d_in, int n) {
 }
 
 __global__
+void vector_abs(const float* in, float* out, int n) {
+    int i = blockIdx.x * blockDim.x + threadIdx.x;
+    if (i < n) {
+        out[i] = in[i] >= 0 ? in[i] : in[i] * -1;
+    }
+}
+
+float* cuda_abs(const float *d_in, int n) {
+	float* d_out = cuda_create(n);
+    int threadsPerBlock = 256;
+    int blocksPerGrid = (n + threadsPerBlock - 1) / threadsPerBlock;
+
+	// Reuse multiplication kernel
+    vector_abs<<<blocksPerGrid, threadsPerBlock>>>(
+		d_in, d_out, n
+	);
+    cuda_get_err();
+    return d_out;
+}
+
+__global__
 void vector_sum_partial(const float* in, float* out, int n) {
 
 	// Shared by all threads, faster than __global__ mem

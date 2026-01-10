@@ -61,9 +61,15 @@ float* cuda_scalar_pow(const float *d_in, const float power, int n);
 // defined in cuda_ops.cu
 float* cuda_neg(const float *d_in, int n);
 
+// Apply elementwise absolute value to a vector
+// defined in cuda_ops.cu
+float* cuda_abs(const float *d_in, int n);
+
 // Sum all elements of a vector
 // defined in cuda_ops.cu
 float* cuda_sum(const float *d_in, int n);
+
+
 
 #ifdef __cplusplus
 }

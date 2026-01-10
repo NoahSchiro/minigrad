@@ -9,8 +9,8 @@ int main() {
 	size_t n = 10;
 	float* a = (float*)malloc(n * sizeof(float));
 	//float* b = (float*)malloc(n * sizeof(float));
-	for (size_t i=0; i<n; i++) {
-		a[i] = 2.0;
+	for (int i=0; i<n; i++) {
+		a[i] = i-((int)n/2);
 		//b[i] = 1.0;
 	}
 
@@ -21,20 +21,19 @@ int main() {
 	// No longer need host a and b
 	free(a); //free(b);
 
-	float* d_c = cuda_sum(d_a, n);
+	float* d_c = cuda_abs(d_a, n);
 
 	cuda_sync();
 
 	// Move output back to CPU
-	float* h_c = cuda_read(d_c, 1);
+	float* h_c = cuda_read(d_c, n);
 
 	// No longer need the device pointers
 	cuda_free(d_a); /*cuda_free(d_b);*/ cuda_free(d_c);
 
-	printf("Sum: %f\n", h_c[0]);
-	// for (int i=0; i<n; i++) {
-	// 	printf("%f\n", h_c[i]);
-	// }
+	for (int i=0; i<n; i++) {
+		printf("%f\n", h_c[i]);
+	}
 
 	// Free up the host c
 	free(h_c);
