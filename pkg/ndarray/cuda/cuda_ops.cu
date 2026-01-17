@@ -393,3 +393,74 @@ ndarray_t* cuda_transpose(const ndarray_t* d_in) {
 	return d_out;
 }
 
+__global__
+void vector_mat_mul(
+    const float* d_a, // Inputs
+    const float* d_b,
+    float* d_c,       // Outputs
+    int batch_size,
+    int m, int k, int n
+) {
+    int batch = blockIdx.z;
+
+    int row = blockIdx.y * blockDim.y + threadIdx.y;
+    int col = blockIdx.x * blockDim.x + threadIdx.x;
+
+    if (batch < batch_size && row < m && col < n) {
+        const float* a_ptr = d_a + batch * m * k;
+        const float* b_ptr = d_b + batch * k * n;
+        float*       c_ptr = d_c + batch * m * n;
+
+        float sum = 0.0f;
+        for (int i = 0; i < k; ++i) {
+            sum += a_ptr[row*k+i] * b_ptr[i*n+col];
+        }
+
+        c_ptr[row*n+col] = sum;
+    }
+}
+
+ndarray_t* cuda_matmul(ndarray_t* d_a, ndarray_t* d_b) {
+    
+	int m = d_a->shape[d_a->ndim - 2];
+    int k = d_a->shape[d_a->ndim - 1];
+    int n = d_b->shape[d_b->ndim - 1];
+    
+	int batch_size = 1;
+    for (int i = 0; i < d_a->ndim - 2; ++i) {
+        batch_size *= d_a->shape[i];
+    }
+
+    // Construct output shape: [..., m, n]
+    int* c_shape = (int*)malloc(sizeof(int) * d_a->ndim);
+    for (int i = 0; i < d_a->ndim - 2; ++i) {
+        c_shape[i] = d_a->shape[i];
+    }
+    c_shape[d_a->ndim - 2] = m;
+    c_shape[d_a->ndim - 1] = n;
+
+	// Create result ndarray
+	ndarray_t* d_c = ndarray_create(c_shape, d_a->ndim);
+	// Resultant shape is stored in ndarray_t so this is duplicate info
+	free(c_shape);
+	// Move to CUDA
+	ndarray_to_cuda(d_c);
+
+	// Launch configuration
+    dim3 block(16, 16);
+    dim3 grid(
+        (n + block.x - 1) / block.x,
+        (m + block.y - 1) / block.y,
+        batch_size
+    );
+
+    vector_mat_mul<<<grid, block>>>(
+        d_a->data,
+        d_b->data,
+        d_c->data,
+        batch_size,
+        m, k, n
+    );
+
+	return d_c;
+}

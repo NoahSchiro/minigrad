@@ -92,6 +92,8 @@ float* cuda_sum(const float *d_in, int n);
 // Transpose a vector (must be on cuda)
 ndarray_t* cuda_transpose(const ndarray_t* d_in);
 
+ndarray_t* cuda_matmul(ndarray_t* d_a, ndarray_t* d_b);
+
 #ifdef __cplusplus
 }
 #endif

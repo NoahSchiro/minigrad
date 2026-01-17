@@ -28,10 +28,10 @@ $(OBJ): $(SRC_C)
 
 # Compile CUDA sources
 %.o: %.cu
-	$(NVCC) $(NVCCFLAGS) -c $< -o $@
+	$(NVCC) -c $< -o $@
 
 ndarray_utils.o: ndarray_utils.c
-	$(NVCC) $(NVCCFLAGS) -c $< -o $@
+	$(NVCC) -c $< -o $@
 
 clean:
 	rm -f $(EXE) $(LIB) *.o
