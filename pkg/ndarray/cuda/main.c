@@ -5,38 +5,37 @@
 #include "ndarray.h"
 
 void basic_ops() {
-	// Init
-	size_t n = 10;
-	float* a = (float*)malloc(n * sizeof(float));
-	float* b = (float*)malloc(n * sizeof(float));
-	for (int i=0; i<n; i++) {
-		a[i] = i-((int)n/2);
-		b[i] = 2.0;
+	int a_shape[] = {2,2};
+	ndarray_t* a = ndarray_create(a_shape, 2);
+	for (int i=0; i<a->size; i++) {
+		if (i % 2 == 0) {
+			a->data[i] = (float)i;
+		} else {
+			a->data[i] = (float)-i;
+		}
 	}
-
-	// Move a and b to device
-	float* d_a = cuda_write(a, n);
-	float* d_b = cuda_write(b, n);
-
-	// No longer need host a and b
-	free(a); free(b);
-
-	float* d_c = cuda_elem_mul(d_a, d_b, n);
-
-	cuda_sync();
-
-	// Move output back to CPU
-	float* h_c = cuda_read(d_c, n);
-
-	// No longer need the device pointers
-	cuda_free(d_a); cuda_free(d_b); cuda_free(d_c);
-
-	for (int i=0; i<n; i++) {
-		printf("%f\n", h_c[i]);
+	printf("A:\n");
+	ndarray_print(a);
+	ndarray_to_cuda(a);
+	
+	/*
+	int b_shape[] = {2,2};
+	ndarray_t* b = ndarray_create(b_shape, 2);
+	for (int i=0; i<b->size; i++) {
+		b->data[i] = (float)i;
 	}
+	printf("B:\n");
+	ndarray_print(b);
+	ndarray_to_cuda(b);
+	*/
 
-	// Free up the host c
-	free(h_c);
+	ndarray_t* result = cuda_sum(a);
+	
+	ndarray_free(a); //ndarray_free(b);
+
+	ndarray_from_cuda(result);
+	ndarray_print(result);
+	ndarray_free(result);
 }
 
 void transpose() {
@@ -90,10 +89,9 @@ void matmul() {
 	ndarray_from_cuda(result);
 	ndarray_print(result);
 	ndarray_free(result);
-
 }
 
 int main() {
-	matmul();
+	basic_ops();
 	return 0;
 }

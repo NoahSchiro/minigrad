@@ -47,51 +47,54 @@ void cuda_free(float* d_data);
 
 // Add two vectors
 // defined in cuda_ops.cu
-float* cuda_add(const float *d_a, const float *d_b, int n);
+ndarray_t* cuda_add(const ndarray_t *d_a, const ndarray_t *d_b);
 
 // Multiply two vectors (element wise)
 // defined in cuda_ops.cu
-float* cuda_elem_mul(const float *d_a, const float *d_b, int n);
+ndarray_t* cuda_elem_mul(const ndarray_t* d_a, const ndarray_t* d_b);
 
 // Apply relu to every element of a vector
 // defined in cuda_ops.cu
-float* cuda_relu(const float *d_in, int n);
+ndarray_t* cuda_relu(const ndarray_t* d_in);
 
 // Apply sigmoid to every element of a vector
 // defined in cuda_ops.cu
-float* cuda_sigmoid(const float *d_in, int n);
+ndarray_t* cuda_sigmoid(const ndarray_t* d_in);
 
 // Add a scalar to every element of a vector
 // defined in cuda_ops.cu
-float* cuda_scalar_add(const float *d_in, const float scalar, int n);
+ndarray_t* cuda_scalar_add(const ndarray_t* d_in, const float scalar);
 
 // Multiply a scalar to every element of a vector
 // defined in cuda_ops.cu
-float* cuda_scalar_mul(const float *d_in, const float scalar, int n);
+ndarray_t* cuda_scalar_mul(const ndarray_t* d_in, const float scalar);
 
 // Divide every element of a vector by a scalar
 // defined in cuda_ops.cu
-float* cuda_scalar_div(const float *d_in, const float scalar, int n);
+ndarray_t* cuda_scalar_div(const ndarray_t* d_in, const float scalar);
 
 // Raise every element of a vector to a certain power
 // defined in cuda_ops.cu
-float* cuda_scalar_pow(const float *d_in, const float power, int n);
+ndarray_t* cuda_scalar_pow(const ndarray_t* d_in, const float power);
 
 // Negate every element of a vector
 // defined in cuda_ops.cu
-float* cuda_neg(const float *d_in, int n);
+ndarray_t* cuda_neg(const ndarray_t* d_in);
 
 // Apply elementwise absolute value to a vector
 // defined in cuda_ops.cu
-float* cuda_abs(const float *d_in, int n);
+ndarray_t* cuda_abs(const ndarray_t* d_in);
 
 // Sum all elements of a vector
 // defined in cuda_ops.cu
-float* cuda_sum(const float *d_in, int n);
+ndarray_t* cuda_sum(const ndarray_t* d_in);
 
 // Transpose a vector (must be on cuda)
+// defined in cuda_ops.cu
 ndarray_t* cuda_transpose(const ndarray_t* d_in);
 
+// Perform matrix multiplication
+// defined in cuda_ops.cu
 ndarray_t* cuda_matmul(ndarray_t* d_a, ndarray_t* d_b);
 
 #ifdef __cplusplus

@@ -14,15 +14,21 @@ void vector_add(const float *a, const float *b, float *c, int n) {
 
 // C wrapper code for vector_add
 // Inputs must be on the GPU already and the output is placed on the GPU
-float* cuda_add(const float *d_a, const float *d_b, int n) {
+ndarray_t* cuda_add(const ndarray_t *d_a, const ndarray_t *d_b) {
 	
-	float *d_c = cuda_create(n); 
+	ndarray_t* d_c = ndarray_create(d_a->shape, d_a->ndim);
+	ndarray_to_cuda(d_c);
 
     // Launch config
     int threadsPerBlock = 256;
-    int blocksPerGrid = (n + threadsPerBlock - 1) / threadsPerBlock;
+    int blocksPerGrid = (d_c->size + threadsPerBlock - 1) / threadsPerBlock;
 
-    vector_add<<<blocksPerGrid, threadsPerBlock>>>(d_a, d_b, d_c, n);
+    vector_add<<<blocksPerGrid, threadsPerBlock>>>(
+		d_a->data,
+		d_b->data,
+		d_c->data,
+		d_c->size
+	);
 	cuda_get_err();
 
 	return d_c;
@@ -36,13 +42,19 @@ void vector_elem_mul(const float *a, const float *b, float *c, int n) {
     }
 }
 
-float* cuda_elem_mul(const float *d_a, const float *d_b, int n) {
-	float *d_c = cuda_create(n); 
+ndarray_t* cuda_elem_mul(const ndarray_t* d_a, const ndarray_t* d_b) {
+	ndarray_t* d_c = ndarray_create(d_a->shape, d_a->ndim); 
+	ndarray_to_cuda(d_c);
 
     int threadsPerBlock = 256;
-    int blocksPerGrid = (n + threadsPerBlock - 1) / threadsPerBlock;
+    int blocksPerGrid = (d_c->size + threadsPerBlock - 1) / threadsPerBlock;
 
-    vector_elem_mul<<<blocksPerGrid, threadsPerBlock>>>(d_a, d_b, d_c, n);
+    vector_elem_mul<<<blocksPerGrid, threadsPerBlock>>>(
+		d_a->data,
+		d_b->data,
+		d_c->data,
+		d_c->size
+	);
 	cuda_get_err();
 
 	return d_c;
@@ -59,17 +71,20 @@ void vector_relu(const float* in, float* out, int n) {
 
 // C wrapper code for vector_add
 // Inputs must be on the GPU already and the output is placed on the GPU
-float* cuda_relu(const float *d_in, int n) {
-	float* d_out = cuda_create(n);
+ndarray_t* cuda_relu(const ndarray_t* d_in) {
+	ndarray_t* d_out = ndarray_create(d_in->shape, d_in->ndim);
+	ndarray_to_cuda(d_out);
 
     // Launch config
     int threadsPerBlock = 256;
-    int blocksPerGrid = (n + threadsPerBlock - 1) / threadsPerBlock;
+    int blocksPerGrid = (d_in->size + threadsPerBlock - 1) / threadsPerBlock;
 
-    vector_relu<<<blocksPerGrid, threadsPerBlock>>>(d_in, d_out, n);
+    vector_relu<<<blocksPerGrid, threadsPerBlock>>>(
+		d_in->data, d_out->data, d_out->size
+	);
 	cuda_get_err();
-	return d_out;
 
+	return d_out;
 }
 
 // Vector unary apply of Sigmoid
@@ -82,13 +97,16 @@ void vector_sigmoid(const float* in, float* out, int n) {
     }
 }
 
-float* cuda_sigmoid(const float* d_in, int n) {
-    float* d_out = cuda_create(n);
+ndarray_t* cuda_sigmoid(const ndarray_t* d_in) {
+    ndarray_t* d_out = ndarray_create(d_in->shape, d_in->ndim);
+	ndarray_to_cuda(d_out);
 
     int threadsPerBlock = 256;
-    int blocksPerGrid = (n + threadsPerBlock - 1) / threadsPerBlock;
+    int blocksPerGrid = (d_out->size + threadsPerBlock - 1) / threadsPerBlock;
 
-    vector_sigmoid<<<blocksPerGrid, threadsPerBlock>>>(d_in, d_out, n);
+    vector_sigmoid<<<blocksPerGrid, threadsPerBlock>>>(
+		d_in->data, d_out->data, d_out->size
+	);
     cuda_get_err();
     return d_out;
 }
@@ -101,14 +119,15 @@ void vector_scalar_add(const float* in, const float scalar, float* out, int n) {
     }
 }
 
-float* cuda_scalar_add(const float *d_in, const float scalar, int n) {
-	float* d_out = cuda_create(n);
+ndarray_t* cuda_scalar_add(const ndarray_t* d_in, const float scalar) {
+	ndarray_t* d_out = ndarray_create(d_in->shape, d_in->ndim);
+	ndarray_to_cuda(d_out);
 
     int threadsPerBlock = 256;
-    int blocksPerGrid = (n + threadsPerBlock - 1) / threadsPerBlock;
+    int blocksPerGrid = (d_out->size + threadsPerBlock - 1) / threadsPerBlock;
 
     vector_scalar_add<<<blocksPerGrid, threadsPerBlock>>>(
-		d_in, scalar, d_out, n
+		d_in->data, scalar, d_out->data, d_out->size
 	);
     cuda_get_err();
     return d_out;
@@ -122,14 +141,15 @@ void vector_scalar_mul(const float* in, const float scalar, float* out, int n) {
     }
 }
 
-float* cuda_scalar_mul(const float *d_in, const float scalar, int n) {
-	float* d_out = cuda_create(n);
+ndarray_t* cuda_scalar_mul(const ndarray_t* d_in, const float scalar) {
+	ndarray_t* d_out = ndarray_create(d_in->shape, d_in->ndim);
+	ndarray_to_cuda(d_out);
 
     int threadsPerBlock = 256;
-    int blocksPerGrid = (n + threadsPerBlock - 1) / threadsPerBlock;
+    int blocksPerGrid = (d_out->size + threadsPerBlock - 1) / threadsPerBlock;
 
     vector_scalar_mul<<<blocksPerGrid, threadsPerBlock>>>(
-		d_in, scalar, d_out, n
+		d_in->data, scalar, d_out->data, d_out->size
 	);
     cuda_get_err();
     return d_out;
@@ -143,14 +163,15 @@ void vector_scalar_div(const float* in, const float scalar, float* out, int n) {
     }
 }
 
-float* cuda_scalar_div(const float *d_in, const float scalar, int n) {
-	float* d_out = cuda_create(n);
+ndarray_t* cuda_scalar_div(const ndarray_t* d_in, const float scalar) {
+	ndarray_t* d_out = ndarray_create(d_in->shape, d_in->ndim);
+	ndarray_to_cuda(d_out);
 
     int threadsPerBlock = 256;
-    int blocksPerGrid = (n + threadsPerBlock - 1) / threadsPerBlock;
+    int blocksPerGrid = (d_out->size + threadsPerBlock - 1) / threadsPerBlock;
 
     vector_scalar_div<<<blocksPerGrid, threadsPerBlock>>>(
-		d_in, scalar, d_out, n
+		d_in->data, scalar, d_out->data, d_out->size
 	);
     cuda_get_err();
     return d_out;
@@ -164,27 +185,30 @@ void vector_scalar_pow(const float* in, const float power, float* out, int n) {
     }
 }
 
-float* cuda_scalar_pow(const float *d_in, const float power, int n) {
-	float* d_out = cuda_create(n);
+ndarray_t* cuda_scalar_pow(const ndarray_t* d_in, const float power) {
+	ndarray_t* d_out = ndarray_create(d_in->shape, d_in->ndim);
+	ndarray_to_cuda(d_out);
 
     int threadsPerBlock = 256;
-    int blocksPerGrid = (n + threadsPerBlock - 1) / threadsPerBlock;
+    int blocksPerGrid = (d_out->size + threadsPerBlock - 1) / threadsPerBlock;
 
     vector_scalar_pow<<<blocksPerGrid, threadsPerBlock>>>(
-		d_in, power, d_out, n
+		d_in->data, power, d_out->data, d_out->size
 	);
     cuda_get_err();
     return d_out;
 }
 
-float* cuda_neg(const float *d_in, int n) {
-	float* d_out = cuda_create(n);
+ndarray_t* cuda_neg(const ndarray_t* d_in) {
+	ndarray_t* d_out = ndarray_create(d_in->shape, d_in->ndim);
+	ndarray_to_cuda(d_out);
+
     int threadsPerBlock = 256;
-    int blocksPerGrid = (n + threadsPerBlock - 1) / threadsPerBlock;
+    int blocksPerGrid = (d_out->size + threadsPerBlock - 1) / threadsPerBlock;
 
 	// Reuse multiplication kernel
     vector_scalar_mul<<<blocksPerGrid, threadsPerBlock>>>(
-		d_in, -1, d_out, n
+		d_in->data, -1, d_out->data, d_out->size
 	);
     cuda_get_err();
     return d_out;
@@ -198,14 +222,16 @@ void vector_abs(const float* in, float* out, int n) {
     }
 }
 
-float* cuda_abs(const float *d_in, int n) {
-	float* d_out = cuda_create(n);
+ndarray_t* cuda_abs(const ndarray_t* d_in) {
+	ndarray_t* d_out = ndarray_create(d_in->shape, d_in->ndim);
+	ndarray_to_cuda(d_out);
+
     int threadsPerBlock = 256;
-    int blocksPerGrid = (n + threadsPerBlock - 1) / threadsPerBlock;
+    int blocksPerGrid = (d_out->size + threadsPerBlock - 1) / threadsPerBlock;
 
 	// Reuse multiplication kernel
     vector_abs<<<blocksPerGrid, threadsPerBlock>>>(
-		d_in, d_out, n
+		d_in->data, d_out->data, d_out->size
 	);
     cuda_get_err();
     return d_out;
@@ -249,16 +275,16 @@ void vector_sum_partial(const float* in, float* out, int n) {
     }
 }
 
-float* cuda_sum(const float* d_in, int n) {
+ndarray_t* cuda_sum(const ndarray_t* d_in) {
     int threads = 256;
 	// For shared mem inside kernel
     int sharedMemSize = threads * sizeof(float);
 
 	// Copy input
-    float* d_prev = (float*)d_in;
+    float* d_prev = (float*)d_in->data;
     float* d_curr = nullptr;
 
-    int curr_n = n;
+    int curr_n = d_in->size;
 
 	// Apply partial sums until we have one elem left
     while (curr_n > 1) {
@@ -273,7 +299,7 @@ float* cuda_sum(const float* d_in, int n) {
         cuda_sync();
 
         // Free intermediate buffer (but not original input)
-        if (d_prev != d_in) {
+        if (d_prev != d_in->data) {
             cuda_free(d_prev);
         }
 
@@ -281,7 +307,12 @@ float* cuda_sum(const float* d_in, int n) {
         curr_n = blocks;
     }
 
-    return d_prev;
+	int shape[] = {1};
+	ndarray_t* result = ndarray_create(shape, 1);
+	ndarray_to_cuda(result);
+	result->data = d_prev;
+
+    return result;
 }
 
 // Warp size
