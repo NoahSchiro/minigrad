@@ -112,6 +112,74 @@ ndarray_t* cuda_sigmoid(const ndarray_t* d_in) {
 }
 
 __global__
+void vector_softmax(
+    const float* in,
+    float* out,
+    int outer_size,
+    int dim_size,
+    int inner_size
+) {
+    int idx = blockIdx.x;
+    if (idx >= outer_size * inner_size) return;
+
+    int outer = idx / inner_size;
+    int inner = idx % inner_size;
+
+    const float* in_ptr  = in  + outer * dim_size * inner_size + inner;
+    float*       out_ptr = out + outer * dim_size * inner_size + inner;
+
+    // Find maximum for numerical stability
+    float max_val = -INFINITY;
+    for (int i = 0; i < dim_size; i++) {
+        float v = in_ptr[i*inner_size];
+        if (v > max_val) max_val = v;
+    }
+
+    // Exponentiate and sum
+    float sum = 0.0f;
+    for (int i = 0; i < dim_size; i++) {
+        float e = expf(in_ptr[i*inner_size] - max_val);
+        out_ptr[i*inner_size] = e;
+        sum += e;
+    }
+
+    // Normalize
+    for (int i = 0; i < dim_size; i++) {
+        out_ptr[i*inner_size] /= sum;
+    }
+}
+
+ndarray_t* cuda_softmax(const ndarray_t* d_in, const int dim) {
+    ndarray_t* d_out = ndarray_create(d_in->shape, d_in->ndim);
+    ndarray_to_cuda(d_out);
+
+    // Compute sizes
+    int outer_size = 1;
+    int inner_size = 1;
+    int dim_size   = d_in->shape[dim];
+
+    for (int i = 0; i < dim; i++) {
+        outer_size *= d_in->shape[i];
+	}
+
+    for (int i = dim + 1; i < d_in->ndim; i++) {
+        inner_size *= d_in->shape[i];
+	}
+
+    int num_blocks = outer_size * inner_size;
+
+    // Launch kernel
+    vector_softmax<<<num_blocks, 1>>>(
+        d_in->data,
+        d_out->data,
+        outer_size,
+        dim_size,
+        inner_size
+    );
+    return d_out;
+}
+
+__global__
 void vector_scalar_add(const float* in, const float scalar, float* out, int n) {
     int i = blockIdx.x * blockDim.x + threadIdx.x;
     if (i < n) {

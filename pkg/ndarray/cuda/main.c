@@ -28,12 +28,12 @@ void basic_ops() {
 	ndarray_print(b);
 	ndarray_to_cuda(b);
 	*/
-
-	ndarray_t* result = cuda_sum(a);
+	ndarray_t* result = cuda_softmax(a, 0);
 	
 	ndarray_free(a); //ndarray_free(b);
 
 	ndarray_from_cuda(result);
+	printf("Result:\n");
 	ndarray_print(result);
 	ndarray_free(result);
 }

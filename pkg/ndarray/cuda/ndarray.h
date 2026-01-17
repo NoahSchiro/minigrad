@@ -61,6 +61,10 @@ ndarray_t* cuda_relu(const ndarray_t* d_in);
 // defined in cuda_ops.cu
 ndarray_t* cuda_sigmoid(const ndarray_t* d_in);
 
+// Apply softmax along a given dimension of a vector
+// defined in cuda_ops.cu
+ndarray_t* cuda_softmax(const ndarray_t* d_in, const int dim);
+
 // Add a scalar to every element of a vector
 // defined in cuda_ops.cu
 ndarray_t* cuda_scalar_add(const ndarray_t* d_in, const float scalar);
