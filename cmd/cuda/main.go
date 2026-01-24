@@ -1,6 +1,8 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+)
 import nd "github.com/NoahSchiro/minigrad/pkg/ndarray"
 
 func main() {
@@ -8,10 +10,11 @@ func main() {
 	x := nd.Rand([]int{2,2})
 
 	x.To(nd.CUDA)
+	y := x.Abs()
 
-	y := x.Clone()
+	x.To(nd.CPU)
 	y.To(nd.CPU)
-	
+
 	fmt.Println(x.Print())
 	fmt.Println(y.Print())
 }
