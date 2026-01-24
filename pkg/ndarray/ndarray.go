@@ -139,7 +139,8 @@ func (a NdArray) Clone() NdArray {
 	}
 }
 
-// Move an NdArray to a particular device
+// Move NdArray data to a particular device
+// This assumes that the Go NdArray struct has the correct shape, ndim, etc
 func (a *NdArray) To(device Device) {
 
 	if a.device == CPU && device == CUDA {
@@ -165,7 +166,25 @@ func (a *NdArray) To(device Device) {
 		a.device = CUDA
 		
 	} else if a.device == CUDA && device == CPU {
+		cArr := (*C.ndarray_t)(a.gpuData)
 
+		C.ndarray_from_cuda(cArr);
+
+		// Convert C pointer to Go array pointer
+		temp := (*[1 << 30]C.float)(unsafe.Pointer(cArr.data))[:a.size:a.size]
+
+		// Allocate slice
+		a.data = make([]float32, a.size)
+
+		// Copy data
+		for i, v := range temp {
+			a.data[i] = float32(v)
+		}
+
+		// Free the c stuff
+		C.ndarray_free(cArr);
+
+		a.device = CPU
 	}
 }
 
