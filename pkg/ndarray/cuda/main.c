@@ -18,7 +18,6 @@ void basic_ops() {
 	ndarray_print(a);
 	ndarray_to_cuda(a);
 	
-	/*
 	int b_shape[] = {2,2};
 	ndarray_t* b = ndarray_create(b_shape, 2);
 	for (int i=0; i<b->size; i++) {
@@ -27,10 +26,10 @@ void basic_ops() {
 	printf("B:\n");
 	ndarray_print(b);
 	ndarray_to_cuda(b);
-	*/
-	ndarray_t* result = cuda_softmax(a, 0);
+
+	ndarray_t* result = cuda_add(a, b);
 	
-	ndarray_free(a); //ndarray_free(b);
+	ndarray_free(a); ndarray_free(b);
 
 	ndarray_from_cuda(result);
 	printf("Result:\n");
@@ -92,6 +91,23 @@ void matmul() {
 }
 
 int main() {
-	basic_ops();
+	int a_shape[] = {10, 10};
+	ndarray_t* first = ndarray_create(
+		a_shape, 2
+	);
+	first->data[10] = 10.;
+	first->data[20] = 20.;
+
+	ndarray_t* second = ndarray_create_with_data(
+		first->data,
+		a_shape,
+		2
+	);
+
+	ndarray_to_cuda(second);
+
+	ndarray_print(first);
+	ndarray_print(second);
+	
 	return 0;
 }

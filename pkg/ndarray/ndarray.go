@@ -3,13 +3,16 @@ package ndarray
 /*
 #cgo CFLAGS: -I${SRCDIR}/cuda
 #cgo LDFLAGS: -L${SRCDIR}/cuda -lcuda
-#include "vector.h"
+#include <string.h>
+#include "ndarray.h"
 */
 import "C"
-import "unsafe"
 
-import "fmt"
-import "math/rand/v2"
+import (
+	"unsafe"
+	"fmt"
+	"math/rand/v2"
+)
 
 type Device int
 
@@ -138,31 +141,31 @@ func (a NdArray) Clone() NdArray {
 
 // Move an NdArray to a particular device
 func (a *NdArray) To(device Device) {
+
 	if a.device == CPU && device == CUDA {
+        
+		// Convert go int (64-bit) to C int (32-bit)
+		cShape := make([]C.int, len(a.shape))
+		for i, v := range a.shape {
+			cShape[i] = C.int(v)
+		}
 
-		// Get the cuda pointer
-		d_data := C.cuda_write(
+		// Create C CPU ndarray_t
+		cArr := C.ndarray_create_with_data(
 			(*C.float)(unsafe.Pointer(&a.data[0])),
-			C.size_t(a.size),
+			(*C.int)(unsafe.Pointer(&cShape[0])),
+			C.int(a.ndim),
 		)
 
-		a.data = nil // Null out the CPU data
-		// Point the pointer to the device
-		a.gpuData = unsafe.Pointer(d_data)
+		// Move C CPU -> C CUDA
+		C.ndarray_to_cuda(cArr)
+		
+		// Save pointer to C ndarray
+		a.gpuData = unsafe.Pointer(cArr)
 		a.device = CUDA
-	}
-	if a.device == CUDA && device == CPU {
+		
+	} else if a.device == CUDA && device == CPU {
 
-		// Read from cuda (allocates mem on cpu)
-		// and free the memory there
-		h_data := C.cuda_read(
-			(*C.float)(a.gpuData),
-			C.size_t(a.size),
-		)
-		C.cuda_free((*C.float)(a.gpuData))
-		a.gpuData = nil
-		a.data = unsafe.Slice((*float32)(h_data), a.size)
-		a.device = CPU
 	}
 }
 

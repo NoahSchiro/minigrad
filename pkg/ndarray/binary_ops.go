@@ -3,12 +3,13 @@ package ndarray
 /*
 #cgo CFLAGS: -I${SRCDIR}/cuda
 #cgo LDFLAGS: -L${SRCDIR}/cuda -lcuda
-#include "vector.h"
+#include "ndarray.h"
 */
 import "C"
 import "unsafe"
 
 import (
+	"fmt"
 	"runtime"
 	"sync"
 )
@@ -88,10 +89,12 @@ func (a NdArray) addParallel(b NdArray) NdArray {
 // Add a and b assuming they are on device,
 // and put answer on device
 func (a NdArray) addCuda(b NdArray) NdArray {
-	d_data := C.cuda_vector_add(
-		(*C.float)(a.gpuData),
-		(*C.float)(b.gpuData),
-		(C.int)(a.size),
+
+	fmt.Printf("a.gpudata is %T\n", a.gpuData)
+	fmt.Printf("b.gpudata is %T\n", b.gpuData)
+	d_data := C.cuda_add(
+		(*C.ndarray_t)(a.gpuData),
+		(*C.ndarray_t)(b.gpuData),
 	)
 
 	return NdArray{
@@ -104,6 +107,7 @@ func (a NdArray) addCuda(b NdArray) NdArray {
 	}
 }
 
+//
 // Element wise matrix multiplication
 func (a NdArray) ElemMul(b NdArray) NdArray {
 	if !checkShape(a, b) {

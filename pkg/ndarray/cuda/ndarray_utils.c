@@ -21,6 +21,12 @@ ndarray_t* ndarray_create(int* shape, int ndim) {
 	return res;
 }
 
+ndarray_t* ndarray_create_with_data(float* data, int* shape, int ndim) {
+	ndarray_t* new = ndarray_create(shape, ndim);
+	memcpy(new->data, data, new->size*sizeof(float));
+	return new;
+}
+
 void ndarray_free(ndarray_t* arr) {
 
 	// If on cuda
@@ -91,6 +97,13 @@ void ndarray_print_recursive(
 }
 
 void ndarray_print(ndarray_t* arr) {
+
+	// If on cuda
+	if (arr->device) {
+		printf("Cannot print an array not on cpu\n");
+		return;
+	}
+
     if (!arr) return;
 
     // Compute strides
@@ -102,6 +115,13 @@ void ndarray_print(ndarray_t* arr) {
 
     ndarray_print_recursive(arr->data, arr->shape, arr->ndim, 0, strides);
     printf("\n");
+
+	printf("shape: [");
+	for (int i = 0; i < arr->ndim; i++) {
+		printf("%d ", arr->shape[i]);
+	}
+	printf("]\n");
+	printf("size: %d\n", arr->size);
 
     free(strides);
 }

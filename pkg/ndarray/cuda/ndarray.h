@@ -13,6 +13,7 @@ typedef struct {
 } ndarray_t;
 
 ndarray_t* ndarray_create(int* shape, int ndim);
+ndarray_t* ndarray_create_with_data(float* data, int* shape, int ndim);
 void ndarray_print(ndarray_t* arr);
 void ndarray_free(ndarray_t* arr);
 
@@ -47,7 +48,7 @@ void cuda_free(float* d_data);
 
 // Add two vectors
 // defined in cuda_ops.cu
-ndarray_t* cuda_add(const ndarray_t *d_a, const ndarray_t *d_b);
+ndarray_t* cuda_add(const ndarray_t* d_a, const ndarray_t* d_b);
 
 // Multiply two vectors (element wise)
 // defined in cuda_ops.cu

@@ -1,37 +1,38 @@
 NVCC = nvcc
 EXE = main
-LIB = libcuda.so 
-LIB_DIR = /usr/local/lib/
+LIB = libcuda.so
+LIB_DIR = /usr/local/lib
 
-LIB_FLAGS = -Xcompiler -fPIC -shared
-
-OBJ = main.o
+CFLAGS = -Xcompiler -fPIC
+LDFLAGS = -shared
 
 SRC_C = main.c
 SRC_CU = cuda_utils.cu cuda_ops.cu
-OBJ_CU = cuda_utils.o  cuda_ops.o
+OBJ_CU = cuda_utils.o cuda_ops.o
+OBJ = main.o ndarray_utils.o
 
 all: $(EXE) lib
 
-lib: $(SRC_CU) ndarray_utils.o
-	$(NVCC) $(LIB_FLAGS) -o $(LIB) $(SRC_CU)
+# Build shared library
+lib: $(OBJ_CU) ndarray_utils.o
+	$(NVCC) $(LDFLAGS) -o $(LIB) $(OBJ_CU) ndarray_utils.o
 
 install: lib
 	sudo cp $(LIB) $(LIB_DIR)
 	sudo ldconfig
 
-$(EXE): $(OBJ) $(OBJ_CU) ndarray_utils.o
-	$(NVCC) $(OBJ) $(OBJ_CU) ndarray_utils.o -o $(EXE)
+# Build executable
+$(EXE): main.o $(OBJ_CU) ndarray_utils.o
+	$(NVCC) $^ -o $@
 
-$(OBJ): $(SRC_C)
-	$(NVCC) -c $(SRC_C) -o $(OBJ)
-
-# Compile CUDA sources
-%.o: %.cu
+main.o: main.c
 	$(NVCC) -c $< -o $@
 
 ndarray_utils.o: ndarray_utils.c
-	$(NVCC) -c $< -o $@
+	$(NVCC) $(CFLAGS) -c $< -o $@
+
+%.o: %.cu
+	$(NVCC) $(CFLAGS) -c $< -o $@
 
 clean:
 	rm -f $(EXE) $(LIB) *.o
