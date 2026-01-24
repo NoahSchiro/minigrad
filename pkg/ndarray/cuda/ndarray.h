@@ -14,6 +14,8 @@ typedef struct {
 
 ndarray_t* ndarray_create(int* shape, int ndim);
 ndarray_t* ndarray_create_with_data(float* data, int* shape, int ndim);
+// This clone is device agonostic!
+ndarray_t* ndarray_clone(ndarray_t* input);
 void ndarray_print(ndarray_t* arr);
 void ndarray_free(ndarray_t* arr);
 
@@ -36,6 +38,10 @@ void cuda_sync();
 // Allocates and copies memory to device
 // defined in cuda_utils.cu
 float* cuda_write(const float* h_data, size_t n);
+
+// Allocates and copies memory from mem on cuda to new mem on cuda
+// defined in cuda_utils.cu
+float* cuda_clone(const float* d_data, size_t n);
 
 // Given a pointer on the device,
 // return a pointer to the host

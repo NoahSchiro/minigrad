@@ -97,14 +97,10 @@ int main() {
 	);
 	first->data[10] = 10.;
 	first->data[20] = 20.;
+	ndarray_to_cuda(first);
 
-	ndarray_t* second = ndarray_create_with_data(
-		first->data,
-		a_shape,
-		2
-	);
-
-	ndarray_to_cuda(second);
+	ndarray_t* second = ndarray_clone(first);
+	ndarray_from_cuda(second);
 
 	ndarray_print(first);
 	ndarray_print(second);

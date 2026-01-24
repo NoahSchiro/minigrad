@@ -35,6 +35,15 @@ float* cuda_write(const float* data, size_t n) {
 	return d_data;
 }
 
+float* cuda_clone(const float* d_data, size_t n) {
+	float* d_out;
+	cudaMalloc(&d_out, n*sizeof(float));
+	cuda_get_err();
+	cudaMemcpy(d_out, d_data, n*sizeof(float), cudaMemcpyDeviceToDevice);
+	cuda_get_err();
+	return d_out;
+}
+
 float* cuda_read(float* d_data, size_t n) {
 	float* h_data = (float*)malloc(n * sizeof(float));
     cudaMemcpy(h_data, d_data, n*sizeof(float), cudaMemcpyDeviceToHost);

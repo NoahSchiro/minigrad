@@ -27,6 +27,29 @@ ndarray_t* ndarray_create_with_data(float* data, int* shape, int ndim) {
 	return new;
 }
 
+ndarray_t* ndarray_clone(ndarray_t* input) {
+	
+	ndarray_t* res = (ndarray_t*)malloc(sizeof(ndarray_t));
+	res->ndim   = input->ndim;
+	res->size   = input->size;
+	res->device = input->device;
+
+	res->shape = (int*)malloc(res->ndim * sizeof(int));
+	memcpy(res->shape, input->shape, res->ndim * sizeof(int));
+
+	// CUDA
+	if (res->device) {
+		res->data = cuda_clone(input->data, input->size);
+
+	// CPU
+	} else {
+		res->data = (float*)malloc(input->size * sizeof(float));
+		memcpy(res->data, input->data, input->size * sizeof(float));
+	}
+
+	return res;
+}
+
 void ndarray_free(ndarray_t* arr) {
 
 	// If on cuda
