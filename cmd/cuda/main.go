@@ -5,17 +5,13 @@ import nd "github.com/NoahSchiro/minigrad/pkg/ndarray"
 
 func main() {
 
-	x := nd.Rand([]int{10,10})
-	
-	fmt.Printf(x.Print())
-	fmt.Printf("x is on %s\n", x.Device())
+	x := nd.Rand([]int{2,2})
 
 	x.To(nd.CUDA)
 
-	fmt.Printf(x.Print())
-	fmt.Printf("x is on %s\n", x.Device())
-
-	x.To(nd.CPU)
-	fmt.Printf(x.Print())
-	fmt.Printf("x is on %s\n", x.Device())
+	y := x.Clone()
+	y.To(nd.CPU)
+	
+	fmt.Println(x.Print())
+	fmt.Println(y.Print())
 }

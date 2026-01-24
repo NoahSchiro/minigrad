@@ -122,20 +122,40 @@ func Uniform(shape []int, lower, upper float32) NdArray {
 	}
 }
 
-// TODO: This should clone on whatever
-// device the "a" is on
 func (a NdArray) Clone() NdArray {
-	new_data := make([]float32, a.size)
-	copy(new_data, a.data)
+	
 	new_shape := make([]int, a.ndim)
 	copy(new_shape, a.shape)
 
-	return NdArray{
-		data: new_data,
-		shape: new_shape,
-		size: a.size,
-		ndim: a.ndim,
-		device: CPU,
+	// Cuda
+	if a.device == CUDA {
+
+		cArr := (*C.ndarray_t)(a.gpuData);
+		newcArr := unsafe.Pointer(C.ndarray_clone(cArr))
+
+		return NdArray{
+			data: nil,
+			gpuData: newcArr,
+			shape: new_shape,
+			size: a.size,
+			ndim: a.ndim,
+			device: CUDA,
+		}
+
+	// CPU
+	} else if a.device == CPU {
+		new_data := make([]float32, a.size)
+		copy(new_data, a.data)
+
+		return NdArray{
+			data: new_data,
+			shape: new_shape,
+			size: a.size,
+			ndim: a.ndim,
+			device: CPU,
+		}
+	} else {
+		panic("Device not supported in ndarray.Clone!")
 	}
 }
 
